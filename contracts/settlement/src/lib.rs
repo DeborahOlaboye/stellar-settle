@@ -4,6 +4,7 @@ mod balances;
 mod expense;
 mod group;
 mod netting;
+mod settle;
 mod types;
 
 use soroban_sdk::{contract, contractimpl, Address, Env, String, Vec};
@@ -62,6 +63,19 @@ impl Contract {
 
     pub fn get_expense(env: Env, group_id: u64, expense_id: u64) -> Expense {
         expense::load_expense(&env, group_id, expense_id)
+    }
+
+    /// Computes the minimal transfer set for a group's current balances
+    /// without executing anything, for the frontend to show before settling.
+    pub fn preview_settlement(env: Env, group_id: u64) -> Vec<Transfer> {
+        settle::preview_settlement(&env, group_id)
+    }
+
+    /// Executes the minimal transfer set as token transfers and zeroes out
+    /// the group's balances. Must be submitted with authorization from every
+    /// member currently in debt.
+    pub fn settle(env: Env, group_id: u64, caller: Address) -> Vec<Transfer> {
+        settle::settle(&env, group_id, caller)
     }
 }
 
