@@ -3,6 +3,7 @@
 mod balances;
 mod expense;
 mod group;
+mod netting;
 mod types;
 
 use soroban_sdk::{contract, contractimpl, Address, Env, String, Vec};
