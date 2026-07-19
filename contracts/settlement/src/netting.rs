@@ -46,3 +46,42 @@ pub fn compute_minimal_transfers(env: &Env, addrs: Vec<Address>, mut amounts: Ve
 
     transfers
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    use soroban_sdk::testutils::Address as _;
+
+    #[test]
+    fn nets_a_three_way_cycle_into_two_transfers() {
+        let env = Env::default();
+        let a = Address::generate(&env);
+        let b = Address::generate(&env);
+        let c = Address::generate(&env);
+
+        let addrs = Vec::from_array(&env, [a.clone(), b.clone(), c.clone()]);
+        let amounts = Vec::from_array(&env, [100i128, -60, -40]);
+
+        let transfers = compute_minimal_transfers(&env, addrs, amounts);
+
+        assert_eq!(transfers.len(), 2);
+        let total: i128 = transfers.iter().map(|t| t.amount).sum();
+        assert_eq!(total, 100);
+        for t in transfers.iter() {
+            assert_eq!(t.to, a);
+        }
+    }
+
+    #[test]
+    fn zero_balances_produce_no_transfers() {
+        let env = Env::default();
+        let a = Address::generate(&env);
+        let b = Address::generate(&env);
+
+        let addrs = Vec::from_array(&env, [a, b]);
+        let amounts = Vec::from_array(&env, [0i128, 0i128]);
+
+        let transfers = compute_minimal_transfers(&env, addrs, amounts);
+        assert!(transfers.is_empty());
+    }
+}
