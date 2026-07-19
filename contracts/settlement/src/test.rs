@@ -165,3 +165,64 @@ fn disputed_share_does_not_affect_balances() {
     assert_eq!(expense.disputed.len(), 1);
     assert_eq!(expense.confirmed.len(), 1);
 }
+
+#[test]
+#[should_panic(expected = "creator must be a member of the group")]
+fn create_group_requires_creator_to_be_a_member() {
+    let env = Env::default();
+    env.mock_all_auths();
+
+    let admin = Address::generate(&env);
+    let token_id = setup_token(&env, &admin);
+
+    let alice = Address::generate(&env);
+    let bob = Address::generate(&env);
+    let outsider = Address::generate(&env);
+
+    let contract_id = env.register(Contract, ());
+    let client = ContractClient::new(&env, &contract_id);
+
+    let members = Vec::from_array(&env, [alice.clone(), bob.clone()]);
+    client.create_group(
+        &outsider,
+        &String::from_str(&env, "Bad Group"),
+        &token_id,
+        &members,
+    );
+}
+
+#[test]
+#[should_panic(expected = "already confirmed")]
+fn cannot_confirm_expense_twice() {
+    let env = Env::default();
+    env.mock_all_auths();
+
+    let admin = Address::generate(&env);
+    let token_id = setup_token(&env, &admin);
+
+    let alice = Address::generate(&env);
+    let bob = Address::generate(&env);
+
+    let contract_id = env.register(Contract, ());
+    let client = ContractClient::new(&env, &contract_id);
+
+    let members = Vec::from_array(&env, [alice.clone(), bob.clone()]);
+    let group_id = client.create_group(
+        &alice,
+        &String::from_str(&env, "Pair"),
+        &token_id,
+        &members,
+    );
+
+    let participants = Vec::from_array(&env, [bob.clone()]);
+    let expense_id = client.log_expense(
+        &group_id,
+        &alice,
+        &50,
+        &String::from_str(&env, "coffee"),
+        &participants,
+    );
+
+    client.confirm_expense(&group_id, &expense_id, &bob);
+    client.confirm_expense(&group_id, &expense_id, &bob);
+}
