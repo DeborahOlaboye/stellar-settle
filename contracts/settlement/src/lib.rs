@@ -1,5 +1,6 @@
 #![no_std]
 
+mod balances;
 mod group;
 mod types;
 
@@ -26,6 +27,10 @@ impl Contract {
 
     pub fn get_group(env: Env, group_id: u64) -> Group {
         group::load_group(&env, group_id)
+    }
+
+    pub fn get_member_balance(env: Env, group_id: u64, member: Address) -> i128 {
+        balances::get_balance(&env, group_id, &member)
     }
 }
 
