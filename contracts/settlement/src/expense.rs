@@ -1,5 +1,6 @@
 use soroban_sdk::{Address, Env, String, Vec};
 
+use crate::balances::{get_balance, set_balance};
 use crate::group::load_group;
 use crate::types::{DataKey, Expense};
 
@@ -67,6 +68,50 @@ pub fn log_expense(
         .extend_ttl(&key, BUMP_THRESHOLD, BUMP_AMOUNT);
 
     id
+}
+
+pub fn confirm_expense(env: &Env, group_id: u64, expense_id: u64, participant: Address) {
+    participant.require_auth();
+    let mut expense = load_expense(env, group_id, expense_id);
+    assert!(!expense.confirmed.contains(&participant), "already confirmed");
+    assert!(!expense.disputed.contains(&participant), "already disputed");
+
+    let idx = expense
+        .participants
+        .iter()
+        .position(|a| a == participant)
+        .unwrap_or_else(|| panic!("not a participant on this expense"));
+    let share = expense.shares.get(idx as u32).unwrap();
+
+    let payer_balance = get_balance(env, group_id, &expense.payer);
+    set_balance(env, group_id, &expense.payer, payer_balance + share);
+    let participant_balance = get_balance(env, group_id, &participant);
+    set_balance(env, group_id, &participant, participant_balance - share);
+
+    expense.confirmed.push_back(participant);
+    let key = DataKey::Expense(group_id, expense_id);
+    env.storage().persistent().set(&key, &expense);
+    env.storage()
+        .persistent()
+        .extend_ttl(&key, BUMP_THRESHOLD, BUMP_AMOUNT);
+}
+
+pub fn dispute_expense(env: &Env, group_id: u64, expense_id: u64, participant: Address) {
+    participant.require_auth();
+    let mut expense = load_expense(env, group_id, expense_id);
+    assert!(!expense.confirmed.contains(&participant), "already confirmed");
+    assert!(!expense.disputed.contains(&participant), "already disputed");
+    assert!(
+        expense.participants.contains(&participant),
+        "not a participant on this expense"
+    );
+
+    expense.disputed.push_back(participant);
+    let key = DataKey::Expense(group_id, expense_id);
+    env.storage().persistent().set(&key, &expense);
+    env.storage()
+        .persistent()
+        .extend_ttl(&key, BUMP_THRESHOLD, BUMP_AMOUNT);
 }
 
 pub fn load_expense(env: &Env, group_id: u64, expense_id: u64) -> Expense {
