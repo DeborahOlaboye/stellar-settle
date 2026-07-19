@@ -77,3 +77,91 @@ fn full_expense_and_settlement_flow() {
     assert_eq!(client.get_member_balance(&group_id, &bob), 0);
     assert_eq!(client.get_member_balance(&group_id, &carol), 0);
 }
+
+#[test]
+fn expense_split_remainder_goes_to_earliest_participants() {
+    let env = Env::default();
+    env.mock_all_auths();
+
+    let admin = Address::generate(&env);
+    let token_id = setup_token(&env, &admin);
+
+    let alice = Address::generate(&env);
+    let bob = Address::generate(&env);
+    let carol = Address::generate(&env);
+    let dave = Address::generate(&env);
+
+    let contract_id = env.register(Contract, ());
+    let client = ContractClient::new(&env, &contract_id);
+
+    let members = Vec::from_array(&env, [alice.clone(), bob.clone(), carol.clone(), dave.clone()]);
+    let group_id = client.create_group(
+        &alice,
+        &String::from_str(&env, "Roommates"),
+        &token_id,
+        &members,
+    );
+
+    // 100 split three ways: 34/33/33, remainder goes to the first participant.
+    let participants = Vec::from_array(&env, [bob.clone(), carol.clone(), dave.clone()]);
+    let expense_id = client.log_expense(
+        &group_id,
+        &alice,
+        &100,
+        &String::from_str(&env, "utilities"),
+        &participants,
+    );
+
+    client.confirm_expense(&group_id, &expense_id, &bob);
+    client.confirm_expense(&group_id, &expense_id, &carol);
+    client.confirm_expense(&group_id, &expense_id, &dave);
+
+    assert_eq!(client.get_member_balance(&group_id, &bob), -34);
+    assert_eq!(client.get_member_balance(&group_id, &carol), -33);
+    assert_eq!(client.get_member_balance(&group_id, &dave), -33);
+    assert_eq!(client.get_member_balance(&group_id, &alice), 100);
+}
+
+#[test]
+fn disputed_share_does_not_affect_balances() {
+    let env = Env::default();
+    env.mock_all_auths();
+
+    let admin = Address::generate(&env);
+    let token_id = setup_token(&env, &admin);
+
+    let alice = Address::generate(&env);
+    let bob = Address::generate(&env);
+    let carol = Address::generate(&env);
+
+    let contract_id = env.register(Contract, ());
+    let client = ContractClient::new(&env, &contract_id);
+
+    let members = Vec::from_array(&env, [alice.clone(), bob.clone(), carol.clone()]);
+    let group_id = client.create_group(
+        &alice,
+        &String::from_str(&env, "Team"),
+        &token_id,
+        &members,
+    );
+
+    let participants = Vec::from_array(&env, [bob.clone(), carol.clone()]);
+    let expense_id = client.log_expense(
+        &group_id,
+        &alice,
+        &200,
+        &String::from_str(&env, "software license"),
+        &participants,
+    );
+
+    client.dispute_expense(&group_id, &expense_id, &bob);
+    client.confirm_expense(&group_id, &expense_id, &carol);
+
+    assert_eq!(client.get_member_balance(&group_id, &bob), 0);
+    assert_eq!(client.get_member_balance(&group_id, &carol), -100);
+    assert_eq!(client.get_member_balance(&group_id, &alice), 100);
+
+    let expense = client.get_expense(&group_id, &expense_id);
+    assert_eq!(expense.disputed.len(), 1);
+    assert_eq!(expense.confirmed.len(), 1);
+}
