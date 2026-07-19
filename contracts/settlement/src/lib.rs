@@ -1,23 +1,33 @@
 #![no_std]
-use soroban_sdk::{contract, contractimpl, vec, Env, String, Vec};
+
+mod group;
+mod types;
+
+use soroban_sdk::{contract, contractimpl, Address, Env, String, Vec};
+
+pub use types::{Expense, Group, Transfer};
 
 #[contract]
 pub struct Contract;
 
-// This is a sample contract. Replace this placeholder with your own contract logic.
-// A corresponding test example is available in `test.rs`.
-//
-// For comprehensive examples, visit <https://github.com/stellar/soroban-examples>.
-// The repository includes use cases for the Stellar ecosystem, such as data storage on
-// the blockchain, token swaps, liquidity pools, and more.
-//
-// Refer to the official documentation:
-// <https://developers.stellar.org/docs/build/smart-contracts/overview>.
 #[contractimpl]
 impl Contract {
-    pub fn hello(env: Env, to: String) -> Vec<String> {
-        vec![&env, String::from_str(&env, "Hello"), to]
+    /// Creates a group settled in a single asset (`token`). The creator must
+    /// be one of the members.
+    pub fn create_group(
+        env: Env,
+        creator: Address,
+        name: String,
+        token: Address,
+        members: Vec<Address>,
+    ) -> u64 {
+        group::create_group(&env, creator, name, token, members)
+    }
+
+    pub fn get_group(env: Env, group_id: u64) -> Group {
+        group::load_group(&env, group_id)
     }
 }
 
+#[cfg(test)]
 mod test;
