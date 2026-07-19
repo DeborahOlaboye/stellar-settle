@@ -1,1 +1,79 @@
 #![cfg(test)]
+
+use super::*;
+use soroban_sdk::{testutils::Address as _, token, Env, String};
+
+fn setup_token(env: &Env, admin: &Address) -> Address {
+    env.register_stellar_asset_contract_v2(admin.clone()).address()
+}
+
+#[test]
+fn full_expense_and_settlement_flow() {
+    let env = Env::default();
+    // settle() triggers require_auth() for each debtor from inside the
+    // nested token transfer, not just the caller — in a real transaction
+    // that's satisfied by separate auth entries from each debtor.
+    env.mock_all_auths_allowing_non_root_auth();
+
+    let admin = Address::generate(&env);
+    let token_id = setup_token(&env, &admin);
+    let token_admin = token::StellarAssetClient::new(&env, &token_id);
+    let token_client = token::TokenClient::new(&env, &token_id);
+
+    let alice = Address::generate(&env);
+    let bob = Address::generate(&env);
+    let carol = Address::generate(&env);
+
+    // Bob and Carol need funds on hand to settle what they end up owing.
+    token_admin.mint(&bob, &10_000);
+    token_admin.mint(&carol, &10_000);
+
+    let contract_id = env.register(Contract, ());
+    let client = ContractClient::new(&env, &contract_id);
+
+    let members = Vec::from_array(&env, [alice.clone(), bob.clone(), carol.clone()]);
+    let group_id = client.create_group(
+        &alice,
+        &String::from_str(&env, "Trip"),
+        &token_id,
+        &members,
+    );
+
+    // Alice pays 300 for dinner, split evenly between Bob and Carol.
+    let participants = Vec::from_array(&env, [bob.clone(), carol.clone()]);
+    let expense_id = client.log_expense(
+        &group_id,
+        &alice,
+        &300,
+        &String::from_str(&env, "dinner"),
+        &participants,
+    );
+
+    // Balances stay at zero until each participant confirms their share.
+    assert_eq!(client.get_member_balance(&group_id, &alice), 0);
+
+    client.confirm_expense(&group_id, &expense_id, &bob);
+    assert_eq!(client.get_member_balance(&group_id, &alice), 150);
+    assert_eq!(client.get_member_balance(&group_id, &bob), -150);
+    assert_eq!(client.get_member_balance(&group_id, &carol), 0);
+
+    client.confirm_expense(&group_id, &expense_id, &carol);
+    assert_eq!(client.get_member_balance(&group_id, &alice), 300);
+    assert_eq!(client.get_member_balance(&group_id, &bob), -150);
+    assert_eq!(client.get_member_balance(&group_id, &carol), -150);
+
+    let preview = client.preview_settlement(&group_id);
+    assert_eq!(preview.len(), 2);
+
+    let alice_before = token_client.balance(&alice);
+    client.settle(&group_id, &alice);
+    let alice_after = token_client.balance(&alice);
+
+    assert_eq!(alice_after - alice_before, 300);
+    assert_eq!(token_client.balance(&bob), 10_000 - 150);
+    assert_eq!(token_client.balance(&carol), 10_000 - 150);
+
+    assert_eq!(client.get_member_balance(&group_id, &alice), 0);
+    assert_eq!(client.get_member_balance(&group_id, &bob), 0);
+    assert_eq!(client.get_member_balance(&group_id, &carol), 0);
+}
