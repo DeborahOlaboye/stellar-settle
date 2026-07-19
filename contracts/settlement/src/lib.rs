@@ -46,6 +46,22 @@ impl Contract {
     ) -> u64 {
         expense::log_expense(&env, group_id, payer, amount, description, participants)
     }
+
+    /// Confirms a participant's share of an expense, applying it to net
+    /// balances. Requires the participant's own authorization.
+    pub fn confirm_expense(env: Env, group_id: u64, expense_id: u64, participant: Address) {
+        expense::confirm_expense(&env, group_id, expense_id, participant)
+    }
+
+    /// Disputes a participant's share of an expense; excludes it from
+    /// balances without affecting other participants' confirmations.
+    pub fn dispute_expense(env: Env, group_id: u64, expense_id: u64, participant: Address) {
+        expense::dispute_expense(&env, group_id, expense_id, participant)
+    }
+
+    pub fn get_expense(env: Env, group_id: u64, expense_id: u64) -> Expense {
+        expense::load_expense(&env, group_id, expense_id)
+    }
 }
 
 #[cfg(test)]
