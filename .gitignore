@@ -4,3 +4,6 @@ target
 # Local settings
 .soroban
 .stellar
+
+# Generated test auth snapshots
+test_snapshots/
