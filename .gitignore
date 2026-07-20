@@ -7,3 +7,15 @@ target
 
 # Generated test auth snapshots
 test_snapshots/
+
+# Node / frontend
+node_modules/
+dist/
+.next/
+out/
+*.tsbuildinfo
+next-env.d.ts
+
+# Editor/OS cruft
+.Rhistory
+.DS_Store
