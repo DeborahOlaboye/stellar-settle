@@ -33,8 +33,7 @@ Built for the Stellar Journey to Mastery builder challenge.
 ├── packages
 │   ├── settlement-client      # generated TS bindings for the settlement contract
 │   └── token-client            # generated TS bindings for the demo SETL token
-├── apps
-│   └── web                     # Next.js frontend (App Router)
+├── frontend                    # Next.js frontend (App Router)
 ├── Cargo.toml
 ├── package.json                # npm workspace root
 └── README.md
@@ -83,7 +82,7 @@ Deployed on testnet:
 npm install                          # from repo root, installs the workspace
 npm run build -w packages/settlement-client
 npm run build -w packages/token-client
-npm run dev -w apps/web              # http://localhost:3000
+npm run dev -w frontend               # http://localhost:3000
 ```
 
 To try it: install the [Freighter](https://www.freighter.app/) wallet extension,
@@ -92,7 +91,7 @@ switch it to Testnet, and fund your account via
 XLM transaction fees). Then use the in-app faucet route
 (`POST /api/faucet`) to mint demo SETL tokens to your address before creating
 a group or settling — the route is backed by the token issuer's key, kept
-server-side in `apps/web/.env.local` (not committed).
+server-side in `frontend/.env.local` (not committed).
 
 The settle flow requires an auth-entry signature from every member currently
 in debt, not just whoever clicks "Confirm & settle" — in the demo, switch

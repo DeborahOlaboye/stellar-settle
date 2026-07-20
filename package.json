@@ -2,7 +2,7 @@
   "name": "stellar-settle",
   "private": true,
   "workspaces": [
-    "apps/*",
+    "frontend",
     "packages/*"
   ]
 }
