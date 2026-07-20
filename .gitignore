@@ -10,11 +10,14 @@ test_snapshots/
 
 # Node / frontend
 node_modules/
-dist/
 .next/
 out/
 *.tsbuildinfo
 next-env.d.ts
+
+# packages/*/dist is committed on purpose: Vercel builds only the frontend
+# workspace, so the generated contract-client bindings need to already be
+# built rather than relying on a separate prebuild step.
 
 # Editor/OS cruft
 .Rhistory
