@@ -226,3 +226,68 @@ fn cannot_confirm_expense_twice() {
     client.confirm_expense(&group_id, &expense_id, &bob);
     client.confirm_expense(&group_id, &expense_id, &bob);
 }
+
+#[test]
+fn lists_groups_by_member_and_expenses_by_group() {
+    let env = Env::default();
+    env.mock_all_auths();
+
+    let admin = Address::generate(&env);
+    let token_id = setup_token(&env, &admin);
+
+    let alice = Address::generate(&env);
+    let bob = Address::generate(&env);
+    let carol = Address::generate(&env);
+
+    let contract_id = env.register(Contract, ());
+    let client = ContractClient::new(&env, &contract_id);
+
+    let trip_members = Vec::from_array(&env, [alice.clone(), bob.clone()]);
+    let trip_id = client.create_group(
+        &alice,
+        &String::from_str(&env, "Trip"),
+        &token_id,
+        &trip_members,
+    );
+
+    let flat_members = Vec::from_array(&env, [alice.clone(), carol.clone()]);
+    let flat_id = client.create_group(
+        &alice,
+        &String::from_str(&env, "Flat"),
+        &token_id,
+        &flat_members,
+    );
+
+    let alice_groups = client.get_member_groups(&alice);
+    assert_eq!(alice_groups, Vec::from_array(&env, [trip_id, flat_id]));
+
+    let bob_groups = client.get_member_groups(&bob);
+    assert_eq!(bob_groups, Vec::from_array(&env, [trip_id]));
+
+    let carol_groups = client.get_member_groups(&carol);
+    assert_eq!(carol_groups, Vec::from_array(&env, [flat_id]));
+
+    assert!(client.get_group_expenses(&trip_id).is_empty());
+
+    let trip_participants = Vec::from_array(&env, [bob.clone()]);
+    client.log_expense(
+        &trip_id,
+        &alice,
+        &40,
+        &String::from_str(&env, "coffee"),
+        &trip_participants,
+    );
+    client.log_expense(
+        &trip_id,
+        &alice,
+        &60,
+        &String::from_str(&env, "taxi"),
+        &trip_participants,
+    );
+
+    let expenses = client.get_group_expenses(&trip_id);
+    assert_eq!(expenses.len(), 2);
+    assert_eq!(expenses.get(0).unwrap().description, String::from_str(&env, "coffee"));
+    assert_eq!(expenses.get(1).unwrap().description, String::from_str(&env, "taxi"));
+    assert!(client.get_group_expenses(&flat_id).is_empty());
+}
