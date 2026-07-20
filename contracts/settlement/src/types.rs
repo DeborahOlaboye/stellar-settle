@@ -8,6 +8,7 @@ pub enum DataKey {
     ExpenseCount(u64),
     Expense(u64, u64),
     Balance(u64, Address),
+    MemberGroups(Address),
 }
 
 #[derive(Clone)]
