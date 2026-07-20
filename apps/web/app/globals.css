@@ -1,0 +1,114 @@
+@import "tailwindcss";
+
+:root {
+  --color-bg: #0c0b10;
+  --color-panel: #17141f;
+  --color-panel-alt: #121017;
+  --color-sidebar: #121017;
+  --color-border: #2b2536;
+  --color-border-soft: #1f1a29;
+  --color-border-strong: #332b40;
+  --color-text: #f4f0ea;
+  --color-text-dim: #9c93a8;
+  --color-text-faint: #726a82;
+  --color-accent: #e8734a;
+  --color-accent-hover: #f5966e;
+  --color-positive: #4fd1c5;
+  --color-positive-hover: #6be0d6;
+  --color-negative: #e8567a;
+  --color-purple: #7c8cf8;
+  --color-gold: #e0b44a;
+}
+
+@theme inline {
+  --color-bg: var(--color-bg);
+  --color-panel: var(--color-panel);
+  --color-panel-alt: var(--color-panel-alt);
+  --color-sidebar: var(--color-sidebar);
+  --color-border: var(--color-border);
+  --color-border-soft: var(--color-border-soft);
+  --color-border-strong: var(--color-border-strong);
+  --color-text: var(--color-text);
+  --color-text-dim: var(--color-text-dim);
+  --color-text-faint: var(--color-text-faint);
+  --color-accent: var(--color-accent);
+  --color-accent-hover: var(--color-accent-hover);
+  --color-positive: var(--color-positive);
+  --color-positive-hover: var(--color-positive-hover);
+  --color-negative: var(--color-negative);
+  --color-purple: var(--color-purple);
+  --color-gold: var(--color-gold);
+  --font-sans: var(--font-space-grotesk);
+  --font-mono: var(--font-plex-mono);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans), sans-serif;
+}
+
+a {
+  color: var(--color-accent);
+  text-decoration: none;
+}
+a:hover {
+  color: var(--color-accent-hover);
+}
+
+::selection {
+  background: var(--color-accent);
+  color: var(--color-bg);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 10px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
