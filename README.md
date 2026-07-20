@@ -24,13 +24,19 @@ Built for the Stellar Journey to Mastery builder challenge.
 │       ├── src
 │       │   ├── lib.rs        # contract entry points
 │       │   ├── types.rs      # Group, Expense, Transfer, storage keys
-│       │   ├── group.rs      # group creation/lookup
+│       │   ├── group.rs      # group creation/lookup, member->groups index
 │       │   ├── expense.rs    # expense logging + confirm/dispute
 │       │   ├── balances.rs   # per-member net balance storage
 │       │   ├── netting.rs    # minimal transfer set (debt-netting) algorithm
 │       │   └── settle.rs     # settlement execution via token transfers
 │       └── Cargo.toml
+├── packages
+│   ├── settlement-client      # generated TS bindings for the settlement contract
+│   └── token-client            # generated TS bindings for the demo SETL token
+├── apps
+│   └── web                     # Next.js frontend (App Router)
 ├── Cargo.toml
+├── package.json                # npm workspace root
 └── README.md
 ```
 
@@ -65,3 +71,29 @@ stellar contract build      # build the wasm target
 `soroban-sdk` is pinned to `22.0.11` — newer releases (25.x, 27.0.0) fail to
 compile with the `testutils` feature due to an upstream dependency conflict
 between `ed25519-dalek` and `rand_core` in `soroban-env-host`.
+
+## Frontend
+
+Deployed on testnet:
+
+- Settlement contract: `CCFOZE4G2B6ZNUWSMFAMJA6WAFZMLUOMIXZMJV3N3Y75TVIC3PO2SRCB`
+- Demo settlement token (SETL): `CBDYIM4WCQIE2QEP7TAS3WDCQ2WUJQZPF35T7OEWI5W5BSBR7W3CT24U`
+
+```bash
+npm install                          # from repo root, installs the workspace
+npm run build -w packages/settlement-client
+npm run build -w packages/token-client
+npm run dev -w apps/web              # http://localhost:3000
+```
+
+To try it: install the [Freighter](https://www.freighter.app/) wallet extension,
+switch it to Testnet, and fund your account via
+[Friendbot](https://laboratory.stellar.org/#account-creator?network=test) (for
+XLM transaction fees). Then use the in-app faucet route
+(`POST /api/faucet`) to mint demo SETL tokens to your address before creating
+a group or settling — the route is backed by the token issuer's key, kept
+server-side in `apps/web/.env.local` (not committed).
+
+The settle flow requires an auth-entry signature from every member currently
+in debt, not just whoever clicks "Confirm & settle" — in the demo, switch
+Freighter's active account between each debtor's signature.
