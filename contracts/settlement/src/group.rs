@@ -26,13 +26,17 @@ pub fn create_group(env: &Env, creator: Address, name: String, token: Address, m
         id,
         name,
         token,
-        members,
+        members: members.clone(),
     };
     let key = DataKey::Group(id);
     env.storage().persistent().set(&key, &group);
     env.storage()
         .persistent()
         .extend_ttl(&key, BUMP_THRESHOLD, BUMP_AMOUNT);
+
+    for member in members.iter() {
+        add_member_group(env, &member, id);
+    }
 
     id
 }
@@ -42,4 +46,21 @@ pub fn load_group(env: &Env, group_id: u64) -> Group {
         .persistent()
         .get(&DataKey::Group(group_id))
         .unwrap_or_else(|| panic!("group not found"))
+}
+
+fn add_member_group(env: &Env, member: &Address, group_id: u64) {
+    let key = DataKey::MemberGroups(member.clone());
+    let mut groups: Vec<u64> = env.storage().persistent().get(&key).unwrap_or(Vec::new(env));
+    groups.push_back(group_id);
+    env.storage().persistent().set(&key, &groups);
+    env.storage()
+        .persistent()
+        .extend_ttl(&key, BUMP_THRESHOLD, BUMP_AMOUNT);
+}
+
+pub fn load_member_groups(env: &Env, member: &Address) -> Vec<u64> {
+    env.storage()
+        .persistent()
+        .get(&DataKey::MemberGroups(member.clone()))
+        .unwrap_or(Vec::new(env))
 }
