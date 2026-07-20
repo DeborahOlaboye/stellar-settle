@@ -120,3 +120,17 @@ pub fn load_expense(env: &Env, group_id: u64, expense_id: u64) -> Expense {
         .get(&DataKey::Expense(group_id, expense_id))
         .unwrap_or_else(|| panic!("expense not found"))
 }
+
+pub fn list_expenses(env: &Env, group_id: u64) -> Vec<Expense> {
+    let count: u64 = env
+        .storage()
+        .instance()
+        .get(&DataKey::ExpenseCount(group_id))
+        .unwrap_or(0u64);
+
+    let mut expenses = Vec::new(env);
+    for id in 1..=count {
+        expenses.push_back(load_expense(env, group_id, id));
+    }
+    expenses
+}
