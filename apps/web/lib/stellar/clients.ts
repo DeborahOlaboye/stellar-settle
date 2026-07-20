@@ -15,9 +15,9 @@ export function createSettlementClient(publicKey: string | null) {
   });
 }
 
-export function createTokenClient(publicKey: string | null) {
+export function createTokenClient(publicKey: string | null, tokenId: string = TOKEN_CONTRACT_ID) {
   return new TokenClient({
-    contractId: TOKEN_CONTRACT_ID,
+    contractId: tokenId,
     networkPassphrase: NETWORK_PASSPHRASE,
     rpcUrl: RPC_URL,
     publicKey: publicKey ?? undefined,
