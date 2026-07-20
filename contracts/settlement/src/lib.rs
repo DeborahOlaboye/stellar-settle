@@ -32,6 +32,11 @@ impl Contract {
         group::load_group(&env, group_id)
     }
 
+    /// Lists the IDs of every group a member belongs to.
+    pub fn get_member_groups(env: Env, member: Address) -> Vec<u64> {
+        group::load_member_groups(&env, &member)
+    }
+
     pub fn get_member_balance(env: Env, group_id: u64, member: Address) -> i128 {
         balances::get_balance(&env, group_id, &member)
     }
@@ -63,6 +68,11 @@ impl Contract {
 
     pub fn get_expense(env: Env, group_id: u64, expense_id: u64) -> Expense {
         expense::load_expense(&env, group_id, expense_id)
+    }
+
+    /// Lists every expense logged in a group, oldest first.
+    pub fn get_group_expenses(env: Env, group_id: u64) -> Vec<Expense> {
+        expense::list_expenses(&env, group_id)
     }
 
     /// Computes the minimal transfer set for a group's current balances
