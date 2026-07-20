@@ -1,0 +1,8 @@
+{
+  "name": "stellar-settle",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
+}
