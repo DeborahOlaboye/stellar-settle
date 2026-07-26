@@ -4,7 +4,10 @@ Cross-border group expense splitting on Stellar. Groups log shared expenses,
 the contract tracks net balances per member, and settling collapses those
 balances into a minimal set of token transfers executed atomically on-chain.
 
-Built for the Stellar Journey to Mastery builder challenge.
+Built for the Stellar Journey to Mastery builder challenge (Level 4).
+
+**Live app:** _add your Vercel URL here_
+**Settlement contract (testnet):** `CCFOZE4G2B6ZNUWSMFAMJA6WAFZMLUOMIXZMJV3N3Y75TVIC3PO2SRCB`
 
 ## Why Stellar
 
@@ -96,3 +99,28 @@ server-side in `frontend/.env.local` (not committed).
 The settle flow requires an auth-entry signature from every member currently
 in debt, not just whoever clicks "Confirm & settle" — in the demo, switch
 Freighter's active account between each debtor's signature.
+
+## Screenshots
+
+| Desktop | Mobile |
+| --- | --- |
+| ![Desktop landing](docs/screenshots/desktop-landing.png) | ![Mobile landing](docs/screenshots/mobile-landing.png) |
+| ![Desktop groups dashboard](docs/screenshots/desktop-groups.png) | ![Mobile groups dashboard](docs/screenshots/mobile-groups.png) |
+| ![Desktop group balances](docs/screenshots/desktop-group-detail.png) | ![Mobile group balances](docs/screenshots/mobile-group-detail.png) |
+| ![Desktop expenses tab](docs/screenshots/desktop-expenses.png) | |
+
+## Product quality
+
+- **Monitoring/analytics:** Vercel Analytics and Speed Insights are wired
+  into the root layout. Custom events (`wallet_connected`, `group_created`,
+  `expense_logged`, `expense_confirmed`, `expense_disputed`,
+  `settlement_completed`) track the core flows from the Vercel dashboard.
+- **Feedback collection:** a "Send feedback" link in the sidebar opens a
+  short form (falls back to a `mailto:` link if `NEXT_PUBLIC_FEEDBACK_FORM_URL`
+  isn't set).
+- **Mobile responsive:** the connected app's sidebar collapses into a
+  top bar below the `md` breakpoint, and the landing page reflows to a
+  single column with no horizontal overflow at 390px-wide viewports.
+- **Loading/error states:** every async screen (groups, balances,
+  expenses, settlement preview) has a loading state, and failures surface
+  as a toast rather than a silent failure.
