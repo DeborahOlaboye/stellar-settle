@@ -80,29 +80,29 @@ export function Landing({
   return (
     <div className="w-full">
       {/* NAV */}
-      <div className="flex items-center justify-between px-12 py-6 max-w-6xl mx-auto">
+      <div className="flex items-center justify-between px-5 py-5 sm:px-12 sm:py-6 max-w-6xl mx-auto">
         <div className="flex items-center gap-2.5">
-          <div className="w-2.5 h-2.5 rounded-sm bg-accent" />
+          <div className="w-2.5 h-2.5 rounded-sm bg-accent flex-none" />
           <div className="font-mono text-[13px] tracking-[2px] uppercase">Stellar Settle</div>
         </div>
         <div className="flex items-center gap-7">
-          <a href="#how-it-works" className="text-sm text-text-dim">How it works</a>
-          <a href="#why-stellar" className="text-sm text-text-dim">Why Stellar</a>
-          <a href="#faq" className="text-sm text-text-dim">FAQ</a>
+          <a href="#how-it-works" className="hidden md:inline text-sm text-text-dim">How it works</a>
+          <a href="#why-stellar" className="hidden md:inline text-sm text-text-dim">Why Stellar</a>
+          <a href="#faq" className="hidden md:inline text-sm text-text-dim">FAQ</a>
           <ConnectButton connecting={connecting} onConnect={onConnect} />
         </div>
       </div>
 
       {/* HERO */}
-      <div className="max-w-6xl mx-auto px-12 pt-16 pb-24 flex items-center gap-16 flex-wrap">
+      <div className="max-w-6xl mx-auto px-5 pt-10 pb-16 sm:px-12 sm:pt-16 sm:pb-24 flex flex-col sm:flex-row items-center gap-10 sm:gap-16">
         <div
-          className="flex-1 min-w-[420px] flex flex-col items-start gap-6.5"
+          className="w-full flex-1 sm:min-w-[420px] flex flex-col items-start gap-6.5"
           style={{ animation: "fadeUp .5s ease" }}
         >
           <div className="font-mono text-[12.5px] tracking-[1.5px] uppercase text-accent border border-[#3D2A22] bg-[rgba(232,115,74,0.10)] px-3 py-1.5 rounded-full">
             Built on Stellar &middot; Soroban
           </div>
-          <h1 className="m-0 text-[58px] leading-[1.05] font-bold tracking-[-1px]">
+          <h1 className="m-0 text-[36px] sm:text-[58px] leading-[1.05] font-bold tracking-[-1px]">
             Split expenses across borders. Settle in one signature.
           </h1>
           <p className="m-0 text-[17px] leading-[1.65] text-text-dim max-w-[520px]">
@@ -110,14 +110,14 @@ export function Landing({
             collapses debts into the minimal set of transfers &mdash; executed atomically, for
             sub-cent fees.
           </p>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 flex-wrap">
             <ConnectButton connecting={connecting} onConnect={onConnect} size="lg" />
             <div className="font-mono text-xs text-text-faint">Testnet demo &middot; no real funds move</div>
           </div>
         </div>
 
         <div
-          className="flex-1 min-w-[360px] max-w-[440px] bg-panel border border-border rounded-2xl p-5.5"
+          className="w-full flex-1 sm:min-w-[360px] sm:max-w-[440px] bg-panel border border-border rounded-2xl p-5.5"
           style={{ animation: "fadeUp .6s ease" }}
         >
           <div className="font-mono text-[11.5px] text-text-faint mb-3.5">LISBON TRIP &middot; USDC</div>
@@ -152,7 +152,7 @@ export function Landing({
       </div>
 
       {/* WHY STELLAR */}
-      <div id="why-stellar" className="max-w-6xl mx-auto px-12 pb-22">
+      <div id="why-stellar" className="max-w-6xl mx-auto px-5 sm:px-12 pb-22">
         <div className="font-mono text-xs tracking-[1.5px] uppercase text-text-faint mb-3">Why Stellar</div>
         <h2 className="m-0 mb-8 text-[30px] font-bold max-w-[600px]">
           The ledger does the work a group chat can&apos;t.
@@ -170,7 +170,7 @@ export function Landing({
       </div>
 
       {/* HOW IT WORKS */}
-      <div id="how-it-works" className="max-w-6xl mx-auto px-12 pb-24">
+      <div id="how-it-works" className="max-w-6xl mx-auto px-5 sm:px-12 pb-24">
         <div className="font-mono text-xs tracking-[1.5px] uppercase text-text-faint mb-3">How it works</div>
         <h2 className="m-0 mb-8 text-[30px] font-bold max-w-[600px]">
           From a shared dinner to a signed settlement.
@@ -187,7 +187,7 @@ export function Landing({
       </div>
 
       {/* FAQ */}
-      <div id="faq" className="max-w-6xl mx-auto px-12 pb-24">
+      <div id="faq" className="max-w-6xl mx-auto px-5 sm:px-12 pb-24">
         <div className="font-mono text-xs tracking-[1.5px] uppercase text-text-faint mb-3">FAQ</div>
         <div className="flex flex-col max-w-[760px]">
           {FAQ.map((item, i) => (
@@ -203,7 +203,7 @@ export function Landing({
       </div>
 
       {/* FOOTER CTA */}
-      <div className="max-w-6xl mx-auto px-12 pt-14 pb-16 border-t border-border-soft flex items-center justify-between flex-wrap gap-5">
+      <div className="max-w-6xl mx-auto px-5 sm:px-12 pt-14 pb-16 border-t border-border-soft flex items-center justify-between flex-wrap gap-5">
         <div>
           <div className="text-[22px] font-bold mb-1.5">Ready to stop chasing your friends for $12?</div>
           <div className="text-[13.5px] text-text-faint">Connect a wallet and create your first group in under a minute.</div>
