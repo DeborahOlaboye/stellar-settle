@@ -1,4 +1,9 @@
 import { truncateAddress } from "@/lib/stellar/format";
+import { track } from "@vercel/analytics";
+
+const FEEDBACK_URL =
+  process.env.NEXT_PUBLIC_FEEDBACK_FORM_URL ||
+  "mailto:deboraholaboye@gmail.com?subject=Stellar%20Settle%20feedback";
 
 export function Sidebar({
   active,
@@ -14,7 +19,7 @@ export function Sidebar({
   onDisconnect: () => void;
 }) {
   return (
-    <div className="w-[250px] flex-none bg-sidebar border-r border-border-soft flex flex-col p-4.5 min-h-screen">
+    <div className="hidden md:flex w-[250px] flex-none bg-sidebar border-r border-border-soft flex-col p-4.5 min-h-screen">
       <div className="flex items-center gap-2.5 px-2 pb-7">
         <div className="w-2.5 h-2.5 rounded-sm bg-accent" />
         <div className="font-mono text-[12.5px] tracking-[1.5px] uppercase">Stellar Settle</div>
@@ -44,6 +49,16 @@ export function Sidebar({
       </div>
 
       <div className="flex-1" />
+
+      <a
+        href={FEEDBACK_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={() => track("feedback_link_clicked")}
+        className="flex items-center gap-2.5 px-3 py-2.5 mb-3 rounded-lg text-sm text-text-dim font-medium hover:bg-[#1C1723] hover:text-text transition-colors"
+      >
+        Send feedback
+      </a>
 
       <div className="flex items-center gap-1.5 px-2.5 pb-2.5">
         <div
