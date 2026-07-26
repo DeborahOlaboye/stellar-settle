@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { track } from "@vercel/analytics";
 import { truncateAddress } from "@/lib/stellar/format";
 import type { SettleTx } from "@/lib/stellar/settleFlow";
 import { signSettlementAs, submitSettlement } from "@/lib/stellar/settleFlow";
@@ -77,6 +78,7 @@ export function SettleStatus({
       const { txHash } = await submitSettlement(tx);
       setTxHash(txHash);
       setPhase("confirmed");
+      track("settlement_completed", { groupName, transfersCount, txHash });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Settlement failed");
       setPhase("collecting");
