@@ -1,8 +1,10 @@
 "use client";
 
 import { useCallback, useRef, useState } from "react";
+import { track } from "@vercel/analytics";
 import { Landing } from "./Landing";
 import { Sidebar } from "./Sidebar";
+import { MobileNav } from "./MobileNav";
 import { GroupsDashboard } from "./GroupsDashboard";
 import { CreateGroupModal } from "./CreateGroupModal";
 import { GroupDetail } from "./GroupDetail";
@@ -112,6 +114,7 @@ export function App() {
       const address = await connectFreighter();
       setWalletAddress(address);
       setScreen("groups");
+      track("wallet_connected", { address });
       await loadGroups(address);
     } catch (err) {
       if (err instanceof FreighterNotInstalledError) {
@@ -136,6 +139,7 @@ export function App() {
     const id = await createGroup(walletAddress, args);
     setShowCreateGroup(false);
     showToast("Group created");
+    track("group_created", { groupId: id.toString(), memberCount: args.members.length });
     await loadGroups(walletAddress);
     await openGroup(id);
   }
@@ -196,6 +200,7 @@ export function App() {
     if (!currentGroup || !walletAddress) return;
     await logExpense(walletAddress, { groupId: currentGroup.id, ...args });
     showToast("Expense logged — awaiting confirmations");
+    track("expense_logged", { groupId: currentGroup.id.toString(), participantCount: args.participants.length });
     setExpensesLoaded(false);
     setScreen("group");
     setGroupTab("expenses");
@@ -213,6 +218,7 @@ export function App() {
     if (!currentGroup || !walletAddress || !selectedExpense) return;
     await confirmExpense(walletAddress, { groupId: currentGroup.id, expenseId: selectedExpense.id });
     showToast("Confirmed — added to your balance");
+    track("expense_confirmed", { groupId: currentGroup.id.toString() });
     setScreen("group");
     setGroupTab("expenses");
     await Promise.all([refreshBalances(), refreshExpenses()]);
@@ -222,6 +228,7 @@ export function App() {
     if (!currentGroup || !walletAddress || !selectedExpense) return;
     await disputeExpense(walletAddress, { groupId: currentGroup.id, expenseId: selectedExpense.id });
     showToast("Disputed — excluded from balances");
+    track("expense_disputed", { groupId: currentGroup.id.toString() });
     setScreen("group");
     setGroupTab("expenses");
     await refreshExpenses();
@@ -280,7 +287,7 @@ export function App() {
   }
 
   return (
-    <div className="flex min-h-screen w-full flex-wrap">
+    <div className="flex flex-col md:flex-row min-h-screen w-full">
       <Sidebar
         active={screen === "cashout" ? "cashout" : "groups"}
         onNavGroups={() => setScreen("groups")}
@@ -288,8 +295,15 @@ export function App() {
         walletAddress={walletAddress}
         onDisconnect={handleDisconnect}
       />
+      <MobileNav
+        active={screen === "cashout" ? "cashout" : "groups"}
+        onNavGroups={() => setScreen("groups")}
+        onNavCashout={openCashout}
+        walletAddress={walletAddress}
+        onDisconnect={handleDisconnect}
+      />
 
-      <div className="flex-1 min-w-0 px-12 py-10">
+      <div className="flex-1 min-w-0 px-5 py-6 sm:px-12 sm:py-10">
         <div className="max-w-[860px]">
           {screen === "groups" && (
             <GroupsDashboard
