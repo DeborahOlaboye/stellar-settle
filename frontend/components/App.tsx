@@ -223,10 +223,15 @@ export function App() {
     await logExpense(walletAddress, { groupId: currentGroup.id, ...args });
     showToast("Expense logged — awaiting confirmations");
     track("expense_logged", { groupId: currentGroup.id.toString(), participantCount: args.participants.length });
-    setExpensesLoaded(false);
     setScreen("group");
     setGroupTab("expenses");
-    await handleTabChange("expenses");
+    // Fetch directly instead of going through handleTabChange's
+    // !expensesLoaded guard — setExpensesLoaded(false) above wouldn't take
+    // effect until the next render, so that guard would still see the old
+    // (already-loaded) value and skip re-fetching, leaving the just-logged
+    // expense missing until a manual page refresh.
+    await refreshExpenses();
+    setExpensesLoaded(true);
   }
 
   function openConfirmExpense(expenseId: bigint) {
