@@ -34,7 +34,6 @@ export function SettleStatus({
   tx,
   debtors,
   onDone,
-  onCashOut,
 }: {
   groupName: string;
   tokenSymbol: string;
@@ -42,7 +41,6 @@ export function SettleStatus({
   tx: SettleTx;
   debtors: string[];
   onDone: () => void;
-  onCashOut: () => void;
 }) {
   const [signed, setSigned] = useState<Set<string>>(new Set());
   const [phase, setPhase] = useState<"collecting" | "submitting" | "confirmed">(
@@ -172,20 +170,12 @@ export function SettleStatus({
                   <div className="font-mono text-[12.5px]">{truncateAddress(txHash ?? "")}</div>
                 </div>
                 <div className="text-[13px] text-positive font-semibold">Balances settled &mdash; all debts cleared.</div>
-                <div className="flex gap-2.5 mt-1.5">
-                  <button
-                    onClick={onDone}
-                    className="flex-1 bg-accent text-bg rounded-lg px-4.5 py-3 font-semibold text-sm cursor-pointer hover:bg-accent-hover transition-colors"
-                  >
-                    Back to group
-                  </button>
-                  <button
-                    onClick={onCashOut}
-                    className="flex-1 bg-transparent border border-border-strong text-text rounded-lg px-4.5 py-3 font-semibold text-sm cursor-pointer hover:border-accent hover:text-accent transition-colors"
-                  >
-                    Cash out to bank
-                  </button>
-                </div>
+                <button
+                  onClick={onDone}
+                  className="bg-accent text-bg rounded-lg px-4.5 py-3 font-semibold text-sm cursor-pointer hover:bg-accent-hover transition-colors mt-1.5"
+                >
+                  Back to group
+                </button>
               </div>
             )}
           </div>

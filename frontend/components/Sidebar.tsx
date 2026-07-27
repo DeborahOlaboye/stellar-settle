@@ -6,15 +6,11 @@ const FEEDBACK_URL =
   "https://docs.google.com/forms/d/e/1FAIpQLSeaFS7Um-dxvSLKnls-A1NMGxn9PCJOzIC8_3GfqzZ4lVXihw/viewform";
 
 export function Sidebar({
-  active,
   onNavGroups,
-  onNavCashout,
   walletAddress,
   onDisconnect,
 }: {
-  active: "groups" | "cashout";
   onNavGroups: () => void;
-  onNavCashout: () => void;
   walletAddress: string;
   onDisconnect: () => void;
 }) {
@@ -28,23 +24,9 @@ export function Sidebar({
       <div className="flex flex-col gap-1">
         <button
           onClick={onNavGroups}
-          className={`text-left flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm cursor-pointer ${
-            active === "groups"
-              ? "bg-border-soft text-text font-semibold"
-              : "text-text-dim font-medium hover:bg-[#1C1723] hover:text-text"
-          }`}
+          className="text-left flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm cursor-pointer bg-border-soft text-text font-semibold"
         >
           Groups
-        </button>
-        <button
-          onClick={onNavCashout}
-          className={`text-left flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm cursor-pointer ${
-            active === "cashout"
-              ? "bg-border-soft text-text font-semibold"
-              : "text-text-dim font-medium hover:bg-[#1C1723] hover:text-text"
-          }`}
-        >
-          Cash out
         </button>
       </div>
 

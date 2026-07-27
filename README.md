@@ -16,8 +16,9 @@ Built for the Stellar Journey to Mastery builder challenge (Level 4).
   receiver gets their preferred asset, converted atomically on the ledger.
 - **Sub-cent fees** make settling small line items (a $4 coffee, a $12 taxi
   share) economically worth doing instead of letting debts linger.
-- **Anchors (SEP-24)** give non-crypto-native group members a real path to
-  cash out to a bank or mobile money.
+- **Anchors (SEP-24)** could give non-crypto-native group members a path to
+  cash out to a bank or mobile money account — planned (see Roadmap), not
+  built yet. Nothing in the current app claims this is live.
 
 ## Project structure
 
@@ -91,11 +92,11 @@ npm run dev -w frontend               # http://localhost:3000
 
 To try it: install the [Freighter](https://www.freighter.app/) wallet extension,
 switch it to Testnet, and fund your account via
-[Friendbot](https://laboratory.stellar.org/#account-creator?network=test) (for
-XLM transaction fees). Then use the in-app faucet route
-(`POST /api/faucet`) to mint demo SETL tokens to your address before creating
-a group or settling — the route is backed by the token issuer's key, kept
-server-side in `frontend/.env.local` (not committed).
+[Friendbot](https://laboratory.stellar.org/#account-creator?network=test). That
+funds you with XLM, which is also the default settlement token — no separate
+faucet or minting step needed to create a group or settle up. (A custom demo
+token, SETL, and its issuer key still exist and can be selected via "Other..."
+in the token picker, but nothing in the app depends on it anymore.)
 
 The settle flow requires an auth-entry signature from every member currently
 in debt, not just whoever clicks "Confirm & settle" — in the demo, switch
@@ -106,9 +107,12 @@ Freighter's active account between each debtor's signature.
 | Desktop | Mobile |
 | --- | --- |
 | ![Desktop landing](docs/screenshots/desktop-landing.png) | ![Mobile landing](docs/screenshots/mobile-landing.png) |
-| ![Desktop groups dashboard](docs/screenshots/desktop-groups.png) | ![Mobile groups dashboard](docs/screenshots/mobile-groups.png) |
-| ![Desktop group balances](docs/screenshots/desktop-group-detail.png) | ![Mobile group balances](docs/screenshots/mobile-group-detail.png) |
-| ![Desktop expenses tab](docs/screenshots/desktop-expenses.png) | |
+
+The landing page needs no wallet connection, so these are pulled straight from
+the live deployment — no fabricated data. Screenshots of the connected app
+(groups, balances, expenses) aren't included here yet because that requires
+a real wallet session with real on-chain groups; see the live app link above
+to try it directly instead of a static image of made-up data.
 
 ## Product quality
 

@@ -12,7 +12,6 @@ import { LogExpenseForm } from "./LogExpenseForm";
 import { ConfirmDisputeExpense } from "./ConfirmDisputeExpense";
 import { SettlementPreview } from "./SettlementPreview";
 import { SettleStatus } from "./SettleStatus";
-import { Cashout } from "./Cashout";
 import { Toast } from "./ui/Toast";
 import { connectFreighter, FreighterNotInstalledError } from "@/lib/stellar/freighter";
 import {
@@ -21,14 +20,12 @@ import {
   fetchGroupExpenses,
   fetchMemberBalance,
   fetchPreviewSettlement,
-  fetchTokenBalance,
   fetchTokenSymbol,
   Group,
   Expense,
 } from "@/lib/stellar/queries";
 import { createGroup, logExpense, confirmExpense, disputeExpense } from "@/lib/stellar/mutations";
 import { buildSettleTransaction, pendingSigners, type SettleTx } from "@/lib/stellar/settleFlow";
-import { XLM_CONTRACT_ID } from "@/lib/stellar/config";
 import type { GroupSummary } from "@/lib/appTypes";
 
 type Screen =
@@ -38,8 +35,7 @@ type Screen =
   | "logExpense"
   | "confirmExpense"
   | "settlePreview"
-  | "settleStatus"
-  | "cashout";
+  | "settleStatus";
 
 export function App() {
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
@@ -68,8 +64,6 @@ export function App() {
   const [settling, setSettling] = useState(false);
   const [settleTx, setSettleTx] = useState<SettleTx | null>(null);
   const [settleDebtors, setSettleDebtors] = useState<string[]>([]);
-
-  const [tokenBalance, setTokenBalance] = useState<bigint | null>(null);
 
   const symbolCache = useRef<Map<string, string>>(new Map());
 
@@ -299,41 +293,14 @@ export function App() {
     await Promise.all([refreshBalances(), walletAddress && loadGroups(walletAddress)]);
   }
 
-  async function openCashout() {
-    setScreen("cashout");
-    if (walletAddress) {
-      try {
-        setTokenBalance(await fetchTokenBalance(walletAddress, XLM_CONTRACT_ID));
-      } catch (err) {
-        setTokenBalance(null);
-        showToast(
-          "Couldn't load your balance — make sure your testnet account is funded via Friendbot. " +
-            (err instanceof Error ? err.message : ""),
-        );
-      }
-    }
-  }
-
   if (screen === "landing" || !walletAddress) {
     return <Landing connecting={connecting} onConnect={handleConnect} />;
   }
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen w-full">
-      <Sidebar
-        active={screen === "cashout" ? "cashout" : "groups"}
-        onNavGroups={() => setScreen("groups")}
-        onNavCashout={openCashout}
-        walletAddress={walletAddress}
-        onDisconnect={handleDisconnect}
-      />
-      <MobileNav
-        active={screen === "cashout" ? "cashout" : "groups"}
-        onNavGroups={() => setScreen("groups")}
-        onNavCashout={openCashout}
-        walletAddress={walletAddress}
-        onDisconnect={handleDisconnect}
-      />
+      <Sidebar onNavGroups={() => setScreen("groups")} walletAddress={walletAddress} onDisconnect={handleDisconnect} />
+      <MobileNav onNavGroups={() => setScreen("groups")} walletAddress={walletAddress} onDisconnect={handleDisconnect} />
 
       <div className="flex-1 min-w-0 px-5 py-6 sm:px-12 sm:py-10">
         <div className="max-w-[860px]">
@@ -408,12 +375,7 @@ export function App() {
               tx={settleTx}
               debtors={settleDebtors}
               onDone={handleSettleDone}
-              onCashOut={openCashout}
             />
-          )}
-
-          {screen === "cashout" && (
-            <Cashout tokenSymbol={tokenSymbol || "XLM"} tokenBalance={tokenBalance} onBack={() => setScreen("groups")} />
           )}
         </div>
       </div>

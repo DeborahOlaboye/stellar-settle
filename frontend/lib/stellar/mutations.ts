@@ -1,4 +1,4 @@
-import { createSettlementClient, createTokenClient } from "./clients";
+import { createSettlementClient } from "./clients";
 
 export async function createGroup(
   publicKey: string,
@@ -51,18 +51,3 @@ export async function disputeExpense(
   });
   await tx.signAndSend();
 }
-
-/** Mints demo tokens to the connecting wallet via the server-side faucet route. */
-export async function requestFaucetFunds(address: string, amount: string): Promise<void> {
-  const res = await fetch("/api/faucet", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ address, amount }),
-  });
-  if (!res.ok) {
-    const body = await res.json().catch(() => ({}));
-    throw new Error(body.error ?? "Faucet request failed");
-  }
-}
-
-export { createTokenClient };

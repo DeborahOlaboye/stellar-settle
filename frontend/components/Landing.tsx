@@ -1,7 +1,10 @@
-const HERO_PREVIEW = [
-  { initials: "TR", color: "#4FD1C5", name: "Théo Rousseau", amount: "+138.90", positive: true },
-  { initials: "PN", color: "#E0B44A", name: "Priya Nair", amount: "-107.10", positive: false },
-  { initials: "ML", color: "#7C8CF8", name: "Mara Lindqvist", amount: "-26.70", positive: false },
+import { SETTLEMENT_CONTRACT_ID } from "@/lib/stellar/config";
+import { truncateAddress } from "@/lib/stellar/format";
+
+const LIVE_FACTS = [
+  { label: "Settlement contract", value: truncateAddress(SETTLEMENT_CONTRACT_ID), href: `https://stellar.expert/explorer/testnet/contract/${SETTLEMENT_CONTRACT_ID}` },
+  { label: "Network", value: "Stellar Testnet" },
+  { label: "Settlement algorithm", value: "Debt-netting (min transfers)" },
 ];
 
 const WHY_STELLAR = [
@@ -16,9 +19,9 @@ const WHY_STELLAR = [
     body: "Settling a $4 coffee or a $12 taxi share is worth doing when the fee doesn't eat the debt.",
   },
   {
-    label: "SEP-24 ANCHORS",
+    label: "SEP-24 ANCHORS (PLANNED)",
     color: "#E0B44A",
-    body: "Non-crypto-native members get a real path to cash out to a bank account or mobile money.",
+    body: "Stellar's anchor network can give non-crypto-native members a path to cash out to a bank account or mobile money — not yet built into Stellar Settle.",
   },
 ];
 
@@ -32,7 +35,7 @@ const HOW_IT_WORKS = [
 const FAQ = [
   { q: "What if someone disputes an expense?", a: "A disputed share is excluded from balances entirely — it never becomes a debt, and the payer can re-log it if it was a mistake." },
   { q: "Who has to sign to settle?", a: "Every member currently in debt authorizes their own transfer; the whole set executes as one atomic transaction." },
-  { q: "Do I need to hold crypto to join a group?", a: "No — a SEP-24 anchor lets members cash in or out via a bank or mobile money account." },
+  { q: "Do I need to hold crypto to join a group?", a: "For now, yes — you need a Stellar wallet funded with the group's settlement asset. Anchor-based cash in/out (no crypto required) is on the roadmap, not built yet." },
 ];
 
 function ConnectButton({
@@ -120,33 +123,31 @@ export function Landing({
           className="w-full flex-1 sm:min-w-[360px] sm:max-w-[440px] bg-panel border border-border rounded-2xl p-5.5"
           style={{ animation: "fadeUp .6s ease" }}
         >
-          <div className="font-mono text-[11.5px] text-text-faint mb-3.5">LISBON TRIP &middot; USDC</div>
+          <div className="font-mono text-[11.5px] text-text-faint mb-3.5">LIVE ON STELLAR TESTNET</div>
           <div className="flex flex-col gap-2.5">
-            {HERO_PREVIEW.map((m) => (
+            {LIVE_FACTS.map((f) => (
               <div
-                key={m.name}
+                key={f.label}
                 className="flex items-center justify-between bg-panel-alt border border-border-soft rounded-lg px-3.5 py-3"
               >
-                <div className="flex items-center gap-2.5">
-                  <div
-                    className="w-6.5 h-6.5 rounded-full flex items-center justify-center font-mono text-[10px] font-semibold text-bg"
-                    style={{ background: m.color }}
+                <div className="text-[13.5px] text-text-dim">{f.label}</div>
+                {f.href ? (
+                  <a
+                    href={f.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-mono text-[13px] text-accent hover:text-accent-hover"
                   >
-                    {m.initials}
-                  </div>
-                  <div className="text-[13.5px]">{m.name}</div>
-                </div>
-                <div
-                  className="font-mono text-sm font-semibold"
-                  style={{ color: m.positive ? "#4FD1C5" : "#E8567A" }}
-                >
-                  {m.amount}
-                </div>
+                    {f.value}
+                  </a>
+                ) : (
+                  <div className="font-mono text-[13px] text-text">{f.value}</div>
+                )}
               </div>
             ))}
           </div>
           <div className="mt-3.5 pt-3.5 border-t border-border-soft font-mono text-xs text-text-faint">
-            3 transfers clear this group &middot; &lt;$0.001 fee each
+            No mock data &mdash; this is the real deployed contract.
           </div>
         </div>
       </div>
