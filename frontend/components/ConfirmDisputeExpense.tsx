@@ -26,6 +26,7 @@ export function ConfirmDisputeExpense({
 
   const yourIndex = expense.participants.indexOf(walletAddress);
   const yourShare = yourIndex >= 0 ? expense.shares[yourIndex] : 0n;
+  const isPayer = expense.payer === walletAddress;
 
   async function handle(action: "confirm" | "dispute") {
     setError(null);
@@ -55,6 +56,12 @@ export function ConfirmDisputeExpense({
         <div className="font-mono text-[32px] font-semibold">
           {fromRawAmount(yourShare)} <span className="text-base text-text-faint">{tokenSymbol}</span>
         </div>
+        {isPayer && (
+          <div className="text-xs text-text-faint mt-2">
+            You paid this expense, so confirming just acknowledges it — it won't change your balance.
+            Only the other participants confirming theirs will.
+          </div>
+        )}
       </div>
 
       <div className="flex flex-col gap-2 mb-6.5">
@@ -89,7 +96,7 @@ export function ConfirmDisputeExpense({
           disabled={busy !== null}
           className="flex-1 bg-positive text-bg rounded-lg px-5.5 py-3.5 font-semibold text-[14.5px] cursor-pointer hover:bg-positive-hover transition-colors disabled:opacity-60 disabled:cursor-default"
         >
-          {busy === "confirm" ? "Confirming…" : "Confirm — I owe this"}
+          {busy === "confirm" ? "Confirming…" : isPayer ? "Confirm — acknowledge this expense" : "Confirm — I owe this"}
         </button>
         <button
           onClick={() => handle("dispute")}

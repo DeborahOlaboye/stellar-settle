@@ -189,7 +189,8 @@ export function GroupDetail({
                     <div className="text-[14.5px] font-semibold">{e.description}</div>
                     <div className="font-mono text-xs text-text-faint mt-1">
                       Paid by {e.payer === walletAddress ? "you" : truncateAddress(e.payer)} &middot;{" "}
-                      {e.participants.length} people
+                      {e.participants.length} people &middot; {e.confirmed.length}/{e.participants.length}{" "}
+                      confirmed
                     </div>
                   </div>
                   <div className="flex items-center gap-3.5">

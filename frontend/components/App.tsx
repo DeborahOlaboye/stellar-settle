@@ -243,8 +243,13 @@ export function App() {
 
   async function handleConfirm() {
     if (!currentGroup || !walletAddress || !selectedExpense) return;
+    const isPayer = selectedExpense.payer === walletAddress;
     await confirmExpense(walletAddress, { groupId: currentGroup.id, expenseId: selectedExpense.id });
-    showToast("Confirmed — added to your balance");
+    showToast(
+      isPayer
+        ? "Confirmed — you're the payer, so this doesn't change your balance"
+        : "Confirmed — added to your balance",
+    );
     track("expense_confirmed", { groupId: currentGroup.id.toString() });
     setScreen("group");
     setGroupTab("expenses");
