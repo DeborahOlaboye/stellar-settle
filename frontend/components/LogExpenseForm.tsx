@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { Group } from "@/lib/stellar/queries";
-import { toRawAmount, truncateAddress } from "@/lib/stellar/format";
+import { toRawAmount, fromRawAmount, truncateAddress } from "@/lib/stellar/format";
 
 export function LogExpenseForm({
   group,
@@ -46,29 +46,43 @@ export function LogExpenseForm({
     });
   }
 
-  const preview = useMemo(() => {
-    const amt = Number(amount);
-    const participants = eligibleParticipants.filter((m) => checked.has(m));
-    if (!amt || amt <= 0 || participants.length === 0) return null;
-    const cents = Math.round(amt * 100);
-    const base = Math.floor(cents / participants.length);
-    const remainder = cents - base * participants.length;
-    return participants.map((m, idx) => ({
-      address: m,
-      amount: ((base + (idx < remainder ? 1 : 0)) / 100).toFixed(2),
+  // The payer is included in `participants` alongside everyone splitting the
+  // bill — the contract computes an equal share for them too, and when they
+  // later confirm their own share it's a net-zero balance change (they can't
+  // owe or be owed by themselves). That gives everyone, including the payer,
+  // an explicit confirm step and a complete on-chain record, instead of the
+  // payer's portion being invisible bookkeeping.
+  const split = useMemo(() => {
+    const others = eligibleParticipants.filter((m) => checked.has(m));
+    if (!amount || Number(amount) <= 0 || others.length === 0) return null;
+
+    let totalRaw: bigint;
+    try {
+      totalRaw = toRawAmount(amount);
+    } catch {
+      return null;
+    }
+    if (totalRaw <= 0n) return null;
+
+    const participants = [payer, ...others];
+    const base = totalRaw / BigInt(participants.length);
+    const remainder = totalRaw % BigInt(participants.length);
+    const shares = participants.map((address, idx) => ({
+      address,
+      amount: fromRawAmount(base + (BigInt(idx) < remainder ? 1n : 0n)),
     }));
-  }, [amount, checked, eligibleParticipants]);
+
+    return { participants, totalRaw, shares };
+  }, [amount, payer, checked, eligibleParticipants]);
 
   async function handleSubmit() {
     setError(null);
-    const amt = Number(amount);
-    if (!description.trim() || !amt || amt <= 0) {
+    if (!description.trim() || !amount || Number(amount) <= 0) {
       setError("Enter a description and amount");
       return;
     }
-    const participants = eligibleParticipants.filter((m) => checked.has(m));
-    if (participants.length === 0) {
-      setError("Select at least one participant who owes a share");
+    if (!split) {
+      setError("Select at least one other participant to split with");
       return;
     }
 
@@ -76,9 +90,9 @@ export function LogExpenseForm({
     try {
       await onSubmit({
         payer,
-        amount: toRawAmount(amount),
+        amount: split.totalRaw,
         description: description.trim(),
-        participants,
+        participants: split.participants,
       });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to log expense");
@@ -106,7 +120,7 @@ export function LogExpenseForm({
         </div>
 
         <div>
-          <div className="text-[13px] text-text-dim mb-1.75">Amount owed to the payer ({tokenSymbol})</div>
+          <div className="text-[13px] text-text-dim mb-1.75">Total amount ({tokenSymbol})</div>
           <input
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
@@ -152,17 +166,20 @@ export function LogExpenseForm({
             ))}
           </div>
           <div className="text-xs text-text-faint mt-2 leading-[1.5]">
-            Shares are split evenly; any remainder cent goes to the earliest participants so shares
-            always sum exactly to the amount.
+            The total is split evenly across everyone including the payer, and everyone — payer
+            included — confirms their own share before it counts as settled.
           </div>
         </div>
 
-        {preview && (
+        {split && (
           <div className="bg-panel border border-border rounded-[10px] px-4 py-3.5">
             <div className="text-xs text-text-faint mb-2">Per-person share</div>
-            {preview.map((p) => (
+            {split.shares.map((p) => (
               <div key={p.address} className="flex justify-between font-mono text-[13px] py-0.75">
-                <div className="text-text-dim">{p.address === walletAddress ? "You" : truncateAddress(p.address)}</div>
+                <div className="text-text-dim">
+                  {p.address === walletAddress ? "You" : truncateAddress(p.address)}
+                  {p.address === payer ? " (payer)" : ""}
+                </div>
                 <div>{p.amount}</div>
               </div>
             ))}
