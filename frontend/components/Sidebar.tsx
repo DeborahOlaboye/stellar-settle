@@ -3,7 +3,7 @@ import { track } from "@vercel/analytics";
 
 const FEEDBACK_URL =
   process.env.NEXT_PUBLIC_FEEDBACK_FORM_URL ||
-  "mailto:deboraholaboye@gmail.com?subject=Stellar%20Settle%20feedback";
+  "https://docs.google.com/forms/d/e/1FAIpQLSeaFS7Um-dxvSLKnls-A1NMGxn9PCJOzIC8_3GfqzZ4lVXihw/viewform";
 
 export function Sidebar({
   active,

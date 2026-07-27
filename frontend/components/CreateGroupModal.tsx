@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { StrKey } from "@stellar/stellar-sdk";
-import { TOKEN_CONTRACT_ID, TOKEN_SYMBOL } from "@/lib/stellar/config";
+import { TOKEN_CONTRACT_ID, KNOWN_TOKENS } from "@/lib/stellar/config";
+import { truncateAddress } from "@/lib/stellar/format";
 
 export function CreateGroupModal({
   walletAddress,
@@ -15,6 +16,7 @@ export function CreateGroupModal({
 }) {
   const [name, setName] = useState("");
   const [token, setToken] = useState(TOKEN_CONTRACT_ID);
+  const [customToken, setCustomToken] = useState(false);
   const [addressesText, setAddressesText] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -26,7 +28,7 @@ export function CreateGroupModal({
       return;
     }
     if (!StrKey.isValidContract(token)) {
-      setError("Settlement token must be a valid contract address (starts with C)");
+      setError("Settlement token must be a Soroban contract address (starts with C), not an asset code");
       return;
     }
 
@@ -73,16 +75,59 @@ export function CreateGroupModal({
 
         <div>
           <div className="text-xs text-text-dim mb-1.5">Settlement token</div>
-          <input
-            value={token}
-            onChange={(e) => setToken(e.target.value)}
-            placeholder={TOKEN_CONTRACT_ID}
-            className="w-full bg-panel-alt border border-border rounded-lg px-3.5 py-2.5 text-text font-mono text-[13px] outline-none focus:border-border-strong"
-          />
-          <div className="text-[11px] text-text-faint mt-1.5">
-            Defaults to the demo {TOKEN_SYMBOL} token. Every member needs a trustline / balance in
-            this asset to settle.
+          <div className="flex flex-wrap gap-2 mb-2">
+            {KNOWN_TOKENS.map((t) => (
+              <button
+                key={t.contractId}
+                type="button"
+                onClick={() => {
+                  setCustomToken(false);
+                  setToken(t.contractId);
+                }}
+                className={`px-3.5 py-2 rounded-full text-[13.5px] font-semibold cursor-pointer ${
+                  !customToken && token === t.contractId
+                    ? "bg-accent text-bg"
+                    : "bg-transparent border border-border-strong text-text-dim hover:border-accent hover:text-accent"
+                }`}
+              >
+                {t.symbol}
+              </button>
+            ))}
+            <button
+              type="button"
+              onClick={() => setCustomToken(true)}
+              className={`px-3.5 py-2 rounded-full text-[13.5px] font-semibold cursor-pointer ${
+                customToken
+                  ? "bg-accent text-bg"
+                  : "bg-transparent border border-border-strong text-text-dim hover:border-accent hover:text-accent"
+              }`}
+            >
+              Other…
+            </button>
           </div>
+
+          {customToken ? (
+            <>
+              <input
+                value={token}
+                onChange={(e) => setToken(e.target.value)}
+                placeholder={TOKEN_CONTRACT_ID}
+                className="w-full bg-panel-alt border border-border rounded-lg px-3.5 py-2.5 text-text font-mono text-[13px] outline-none focus:border-border-strong"
+              />
+              <div className="text-[11px] text-text-faint mt-1.5">
+                Paste a Soroban token contract address (starts with C) — every asset, including
+                XLM, reaches Soroban through its Stellar Asset Contract, which has a different
+                address from the G... account/issuer address.
+              </div>
+            </>
+          ) : (
+            <div className="text-[11px] text-text-faint mt-1.5">
+              {token === TOKEN_CONTRACT_ID
+                ? "Every member needs a balance in this asset to settle."
+                : "Every member needs an XLM balance (their account is already funded in XLM by definition)."}{" "}
+              <span className="font-mono">{truncateAddress(token)}</span>
+            </div>
+          )}
         </div>
 
         <div>

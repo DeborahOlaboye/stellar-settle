@@ -56,7 +56,7 @@ function ConnectButton({
           className="w-3.5 h-3.5 rounded-full border-2 border-border-strong"
           style={{ borderTopColor: "#E8734A", animation: "spin .7s linear infinite" }}
         />
-        {size === "lg" ? "Waiting for approval in Freighter…" : "Connecting…"}
+        Connecting…
       </button>
     );
   }
@@ -65,7 +65,7 @@ function ConnectButton({
       onClick={onConnect}
       className={`bg-accent text-bg rounded-lg ${padding} font-semibold ${fontSize} cursor-pointer hover:bg-accent-hover transition-colors`}
     >
-      {size === "lg" ? "Connect Freighter Wallet" : "Connect Wallet"}
+      Connect Wallet
     </button>
   );
 }

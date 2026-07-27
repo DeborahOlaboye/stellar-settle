@@ -276,8 +276,12 @@ export function App() {
     if (walletAddress) {
       try {
         setTokenBalance(await fetchTokenBalance(walletAddress));
-      } catch {
+      } catch (err) {
         setTokenBalance(null);
+        showToast(
+          "Couldn't load your balance — make sure your testnet account is funded via Friendbot. " +
+            (err instanceof Error ? err.message : ""),
+        );
       }
     }
   }

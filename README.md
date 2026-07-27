@@ -6,7 +6,8 @@ balances into a minimal set of token transfers executed atomically on-chain.
 
 Built for the Stellar Journey to Mastery builder challenge (Level 4).
 
-**Live app:** _add your Vercel URL here_
+**Live app:** https://stellar-settle-frontend.vercel.app/
+**Feedback form:** https://docs.google.com/forms/d/e/1FAIpQLSeaFS7Um-dxvSLKnls-A1NMGxn9PCJOzIC8_3GfqzZ4lVXihw/viewform
 **Settlement contract (testnet):** `CCFOZE4G2B6ZNUWSMFAMJA6WAFZMLUOMIXZMJV3N3Y75TVIC3PO2SRCB`
 
 ## Why Stellar
