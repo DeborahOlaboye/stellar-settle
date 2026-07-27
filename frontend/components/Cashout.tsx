@@ -3,10 +3,13 @@
 import { useState } from "react";
 import { fromRawAmount } from "@/lib/stellar/format";
 
-const ANCHORS = [
-  { id: "moneygram", name: "MoneyGram Access", description: "Cash payout at MoneyGram locations", eta: "~10 min" },
-  { id: "circle", name: "Circle Anchor", description: "Bank transfer via Circle", eta: "~1 business day" },
-  { id: "vibrant", name: "Vibrant", description: "Mobile money, Latin America", eta: "~5 min" },
+// No real anchor is integrated yet (that's mainnet-vision scope per the
+// roadmap) — these are payout *methods* a real SEP-24 anchor would offer,
+// not specific companies we don't actually connect to.
+const ANCHOR_METHODS = [
+  { id: "bank", name: "Bank transfer", eta: "~1 business day" },
+  { id: "mobile-money", name: "Mobile money", eta: "~5 min" },
+  { id: "cash-pickup", name: "Cash pickup", eta: "~10 min" },
 ];
 
 export function Cashout({
@@ -40,7 +43,7 @@ export function Cashout({
     }, 1200);
   }
 
-  const selectedName = anchor ? ANCHORS.find((a) => a.id === anchor)?.name : "the anchor";
+  const selectedName = anchor ? ANCHOR_METHODS.find((a) => a.id === anchor)?.name : "the anchor";
 
   return (
     <div>
@@ -53,7 +56,8 @@ export function Cashout({
         SEP-24 anchor.
       </p>
       <p className="m-0 mb-6 text-xs text-accent max-w-[480px] leading-[1.55]">
-        Simulated in this testnet demo — real anchor integration is mainnet-vision scope.
+        No anchor is integrated yet — this simulates the flow a real SEP-24 anchor would provide.
+        Real anchor integration is mainnet-vision scope (see the roadmap).
       </p>
 
       {step === "form" && (
@@ -62,7 +66,7 @@ export function Cashout({
             Available: {tokenBalance !== null ? fromRawAmount(tokenBalance) : "…"} {tokenSymbol} in your wallet
           </div>
           <div className="flex flex-col gap-2.5 mb-5 max-w-[480px]">
-            {ANCHORS.map((a) => (
+            {ANCHOR_METHODS.map((a) => (
               <div
                 key={a.id}
                 onClick={() => setAnchor(a.id)}
@@ -71,9 +75,7 @@ export function Cashout({
                 }`}
               >
                 <div className="text-[14.5px] font-semibold">{a.name}</div>
-                <div className="text-[12.5px] text-text-dim mt-0.75">
-                  {a.description} &middot; {a.eta}
-                </div>
+                <div className="text-[12.5px] text-text-dim mt-0.75">Simulated &middot; {a.eta}</div>
               </div>
             ))}
           </div>
@@ -104,7 +106,7 @@ export function Cashout({
             style={{ borderTopColor: "#E8734A", animation: "spin .7s linear infinite" }}
           />
           <div className="text-sm text-text-dim">
-            {step === "redirecting" ? `Redirecting to ${selectedName}'s hosted flow…` : "Waiting for anchor confirmation…"}
+            {step === "redirecting" ? `Simulating ${selectedName} hand-off…` : "Simulating anchor confirmation…"}
           </div>
         </div>
       )}

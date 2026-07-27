@@ -82,7 +82,10 @@ export function App() {
   const symbolFor = useCallback(async (tokenId: string): Promise<string> => {
     const cached = symbolCache.current.get(tokenId);
     if (cached) return cached;
-    const symbol = await fetchTokenSymbol(null, tokenId);
+    const raw = await fetchTokenSymbol(null, tokenId);
+    // The native XLM SAC's symbol() call returns the classic asset code
+    // "native", not "XLM" — display the name people actually recognize.
+    const symbol = raw === "native" ? "XLM" : raw;
     symbolCache.current.set(tokenId, symbol);
     return symbol;
   }, []);
@@ -94,11 +97,23 @@ export function App() {
       const summaries = await Promise.all(
         ids.map(async (id) => {
           const g = await fetchGroup(address, id);
-          const [yourBalance, symbol] = await Promise.all([
+          const [yourBalance, symbol, expenses] = await Promise.all([
             fetchMemberBalance(address, id, address),
             symbolFor(g.token),
+            fetchGroupExpenses(address, id),
           ]);
-          return { id, name: g.name, token: g.token, tokenSymbol: symbol, members: g.members, yourBalance };
+          const pendingReviewCount = expenses.filter(
+            (e) => e.participants.includes(address) && !e.confirmed.includes(address) && !e.disputed.includes(address),
+          ).length;
+          return {
+            id,
+            name: g.name,
+            token: g.token,
+            tokenSymbol: symbol,
+            members: g.members,
+            yourBalance,
+            pendingReviewCount,
+          };
         }),
       );
       setGroups(summaries);
@@ -149,8 +164,8 @@ export function App() {
     if (!walletAddress) return;
     setScreen("group");
     setGroupTab("balances");
-    setExpensesLoaded(false);
     setBalancesLoading(true);
+    setExpensesLoading(true);
     try {
       const g = await fetchGroup(walletAddress, id);
       setCurrentGroup(g);
@@ -164,6 +179,18 @@ export function App() {
       showToast(err instanceof Error ? err.message : "Failed to load group");
     } finally {
       setBalancesLoading(false);
+    }
+    // Fetched eagerly (not just on tab switch) so the Balances tab can show
+    // a "needs your review" banner without the user having to think to
+    // check the Expenses tab first.
+    try {
+      const list = await fetchGroupExpenses(walletAddress, id);
+      setExpenses(list);
+      setExpensesLoaded(true);
+    } catch (err) {
+      showToast(err instanceof Error ? err.message : "Failed to load expenses");
+    } finally {
+      setExpensesLoading(false);
     }
   }
 

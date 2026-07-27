@@ -8,6 +8,14 @@ function expenseStatus(expense: Expense): { label: string; color: string } {
   return { label: "Pending", color: "#E8734A" };
 }
 
+function needsReview(expense: Expense, walletAddress: string): boolean {
+  return (
+    expense.participants.includes(walletAddress) &&
+    !expense.confirmed.includes(walletAddress) &&
+    !expense.disputed.includes(walletAddress)
+  );
+}
+
 export function GroupDetail({
   group,
   tokenSymbol,
@@ -38,6 +46,7 @@ export function GroupDetail({
   onSettleUp: () => void;
 }) {
   const allSettled = group.members.every((m) => (balances.get(m) ?? 0n) === 0n);
+  const pendingForYou = expenses.filter((e) => needsReview(e, walletAddress));
 
   return (
     <div>
@@ -88,6 +97,22 @@ export function GroupDetail({
           Expenses
         </button>
       </div>
+
+      {!expensesLoading && pendingForYou.length > 0 && (
+        <div className="flex items-center justify-between gap-3 bg-[rgba(232,115,74,0.10)] border border-[#3D2A22] rounded-lg px-4 py-3 mb-5.5">
+          <div className="text-[13.5px] text-text">
+            {pendingForYou.length === 1
+              ? "You have 1 expense awaiting your confirmation."
+              : `You have ${pendingForYou.length} expenses awaiting your confirmation.`}
+          </div>
+          <button
+            onClick={() => onTabChange("expenses")}
+            className="flex-none bg-accent text-bg rounded-md px-3 py-1.75 font-semibold text-[12.5px] cursor-pointer hover:bg-accent-hover transition-colors"
+          >
+            Review now
+          </button>
+        </div>
+      )}
 
       {tab === "balances" && (
         <>
@@ -154,10 +179,7 @@ export function GroupDetail({
             .reverse()
             .map((e) => {
               const status = expenseStatus(e);
-              const needsYourReview =
-                e.participants.includes(walletAddress) &&
-                !e.confirmed.includes(walletAddress) &&
-                !e.disputed.includes(walletAddress);
+              const needsYourReview = needsReview(e, walletAddress);
               return (
                 <div
                   key={e.id.toString()}

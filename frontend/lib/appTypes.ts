@@ -5,4 +5,5 @@ export type GroupSummary = {
   tokenSymbol: string;
   members: string[];
   yourBalance: bigint;
+  pendingReviewCount: number;
 };

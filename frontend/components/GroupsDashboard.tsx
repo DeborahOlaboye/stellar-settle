@@ -52,7 +52,14 @@ export function GroupsDashboard({
                   ))}
                 </div>
                 <div>
-                  <div className="text-base font-semibold">{g.name}</div>
+                  <div className="flex items-center gap-2">
+                    <div className="text-base font-semibold">{g.name}</div>
+                    {g.pendingReviewCount > 0 && (
+                      <div className="text-[10.5px] font-semibold px-2 py-0.5 rounded-full bg-accent text-bg">
+                        {g.pendingReviewCount} to review
+                      </div>
+                    )}
+                  </div>
                   <div className="text-[13px] text-text-faint mt-0.5">
                     {g.members.length} members &middot; {g.tokenSymbol}
                   </div>
