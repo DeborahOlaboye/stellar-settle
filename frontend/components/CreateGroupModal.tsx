@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { StrKey } from "@stellar/stellar-sdk";
-import { TOKEN_CONTRACT_ID, KNOWN_TOKENS } from "@/lib/stellar/config";
+import { XLM_CONTRACT_ID, KNOWN_TOKENS } from "@/lib/stellar/config";
 import { truncateAddress } from "@/lib/stellar/format";
 
 export function CreateGroupModal({
@@ -15,7 +15,7 @@ export function CreateGroupModal({
   onCreate: (args: { name: string; token: string; members: string[] }) => Promise<void>;
 }) {
   const [name, setName] = useState("");
-  const [token, setToken] = useState(TOKEN_CONTRACT_ID);
+  const [token, setToken] = useState(XLM_CONTRACT_ID);
   const [customToken, setCustomToken] = useState(false);
   const [addressesText, setAddressesText] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -111,7 +111,7 @@ export function CreateGroupModal({
               <input
                 value={token}
                 onChange={(e) => setToken(e.target.value)}
-                placeholder={TOKEN_CONTRACT_ID}
+                placeholder={XLM_CONTRACT_ID}
                 className="w-full bg-panel-alt border border-border rounded-lg px-3.5 py-2.5 text-text font-mono text-[13px] outline-none focus:border-border-strong"
               />
               <div className="text-[11px] text-text-faint mt-1.5">
@@ -122,9 +122,8 @@ export function CreateGroupModal({
             </>
           ) : (
             <div className="text-[11px] text-text-faint mt-1.5">
-              {token === TOKEN_CONTRACT_ID
-                ? "Every member needs a balance in this asset to settle."
-                : "Every member needs an XLM balance (their account is already funded in XLM by definition)."}{" "}
+              Every member's account needs an XLM balance to settle — funded automatically by
+              Friendbot on testnet.{" "}
               <span className="font-mono">{truncateAddress(token)}</span>
             </div>
           )}

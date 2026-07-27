@@ -13,7 +13,8 @@ export const TOKEN_DECIMALS = 7;
 // address. Derived via `stellar contract id asset --asset native --network testnet`.
 export const XLM_CONTRACT_ID = "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC";
 
-export const KNOWN_TOKENS = [
-  { symbol: TOKEN_SYMBOL, contractId: TOKEN_CONTRACT_ID },
-  { symbol: "XLM", contractId: XLM_CONTRACT_ID },
-];
+// XLM is the primary settlement token: every testnet account already holds
+// it (funded via Friendbot), so there's no separate "mint a demo token"
+// step for new users. The SETL demo token still works as a fallback via
+// "Other..." in the picker (paste TOKEN_CONTRACT_ID), it's just not a preset.
+export const KNOWN_TOKENS = [{ symbol: "XLM", contractId: XLM_CONTRACT_ID }];

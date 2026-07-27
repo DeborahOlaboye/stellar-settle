@@ -28,6 +28,7 @@ import {
 } from "@/lib/stellar/queries";
 import { createGroup, logExpense, confirmExpense, disputeExpense } from "@/lib/stellar/mutations";
 import { buildSettleTransaction, pendingSigners, type SettleTx } from "@/lib/stellar/settleFlow";
+import { XLM_CONTRACT_ID } from "@/lib/stellar/config";
 import type { GroupSummary } from "@/lib/appTypes";
 
 type Screen =
@@ -275,7 +276,7 @@ export function App() {
     setScreen("cashout");
     if (walletAddress) {
       try {
-        setTokenBalance(await fetchTokenBalance(walletAddress));
+        setTokenBalance(await fetchTokenBalance(walletAddress, XLM_CONTRACT_ID));
       } catch (err) {
         setTokenBalance(null);
         showToast(
@@ -385,7 +386,7 @@ export function App() {
           )}
 
           {screen === "cashout" && (
-            <Cashout tokenSymbol={tokenSymbol || "SETL"} tokenBalance={tokenBalance} onBack={() => setScreen("groups")} />
+            <Cashout tokenSymbol={tokenSymbol || "XLM"} tokenBalance={tokenBalance} onBack={() => setScreen("groups")} />
           )}
         </div>
       </div>
