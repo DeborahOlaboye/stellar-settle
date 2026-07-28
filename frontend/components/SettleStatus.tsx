@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { track } from "@vercel/analytics";
 import { truncateAddress } from "@/lib/stellar/format";
+import { explorerTxUrl } from "@/lib/stellar/config";
 import type { SettleTx } from "@/lib/stellar/settleFlow";
 import { signSettlementAs, submitSettlement } from "@/lib/stellar/settleFlow";
 
@@ -179,7 +180,14 @@ export function SettleStatus({
               >
                 <div className="flex justify-between items-center">
                   <div className="text-xs text-text-faint">Transaction hash</div>
-                  <div className="font-mono text-[12.5px]">{truncateAddress(txHash ?? "")}</div>
+                  <a
+                    href={explorerTxUrl(txHash ?? "")}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-mono text-[12.5px] text-accent hover:text-accent-hover"
+                  >
+                    {truncateAddress(txHash ?? "")}
+                  </a>
                 </div>
                 <div className="text-[13px] text-positive font-semibold">Balances settled &mdash; all debts cleared.</div>
                 <button

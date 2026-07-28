@@ -18,3 +18,15 @@ export const XLM_CONTRACT_ID = "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU
 // step for new users. The SETL demo token still works as a fallback via
 // "Other..." in the picker (paste TOKEN_CONTRACT_ID), it's just not a preset.
 export const KNOWN_TOKENS = [{ symbol: "XLM", contractId: XLM_CONTRACT_ID }];
+
+export function explorerTxUrl(txHash: string): string {
+  return `https://stellar.expert/explorer/testnet/tx/${txHash}`;
+}
+
+export function explorerContractUrl(contractId: string): string {
+  return `https://stellar.expert/explorer/testnet/contract/${contractId}`;
+}
+
+export function explorerAccountUrl(address: string): string {
+  return `https://stellar.expert/explorer/testnet/account/${address}`;
+}

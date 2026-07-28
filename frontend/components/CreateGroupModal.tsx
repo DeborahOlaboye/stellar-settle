@@ -122,7 +122,7 @@ export function CreateGroupModal({
             </>
           ) : (
             <div className="text-[11px] text-text-faint mt-1.5">
-              Every member's account needs an XLM balance to settle — funded automatically by
+              Every member&apos;s account needs an XLM balance to settle — funded automatically by
               Friendbot on testnet.{" "}
               <span className="font-mono">{truncateAddress(token)}</span>
             </div>

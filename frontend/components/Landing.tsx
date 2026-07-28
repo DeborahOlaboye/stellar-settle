@@ -1,8 +1,8 @@
-import { SETTLEMENT_CONTRACT_ID } from "@/lib/stellar/config";
+import { SETTLEMENT_CONTRACT_ID, explorerContractUrl } from "@/lib/stellar/config";
 import { truncateAddress } from "@/lib/stellar/format";
 
 const LIVE_FACTS = [
-  { label: "Settlement contract", value: truncateAddress(SETTLEMENT_CONTRACT_ID), href: `https://stellar.expert/explorer/testnet/contract/${SETTLEMENT_CONTRACT_ID}` },
+  { label: "Settlement contract", value: truncateAddress(SETTLEMENT_CONTRACT_ID), href: explorerContractUrl(SETTLEMENT_CONTRACT_ID) },
   { label: "Network", value: "Stellar Testnet" },
   { label: "Settlement algorithm", value: "Debt-netting (min transfers)" },
 ];

@@ -58,7 +58,7 @@ export function ConfirmDisputeExpense({
         </div>
         {isPayer && (
           <div className="text-xs text-text-faint mt-2">
-            You paid this expense, so confirming just acknowledges it — it won't change your balance.
+            You paid this expense, so confirming just acknowledges it — it won&apos;t change your balance.
             Only the other participants confirming theirs will.
           </div>
         )}

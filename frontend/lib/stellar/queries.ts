@@ -21,6 +21,12 @@ export async function fetchGroupExpenses(publicKey: string | null, groupId: bigi
   return result;
 }
 
+export async function fetchExpense(publicKey: string | null, groupId: bigint, expenseId: bigint): Promise<Expense> {
+  const client = createSettlementClient(publicKey);
+  const { result } = await client.get_expense({ group_id: groupId, expense_id: expenseId });
+  return result;
+}
+
 export async function fetchMemberBalance(
   publicKey: string | null,
   groupId: bigint,
@@ -37,12 +43,6 @@ export async function fetchPreviewSettlement(
 ): Promise<Transfer[]> {
   const client = createSettlementClient(publicKey);
   const { result } = await client.preview_settlement({ group_id: groupId });
-  return result;
-}
-
-export async function fetchTokenBalance(publicKey: string, tokenId?: string): Promise<bigint> {
-  const client = createTokenClient(publicKey, tokenId);
-  const { result } = await client.balance({ id: publicKey });
   return result;
 }
 
