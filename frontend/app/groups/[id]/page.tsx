@@ -3,12 +3,12 @@
 import { useCallback, useEffect, useState } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { GroupDetail } from "@/components/GroupDetail";
-import { SettlementHistory } from "@/components/SettlementHistory";
+import { ActivityFeed } from "@/components/ActivityFeed";
 import { useWallet } from "@/lib/stellar/WalletContext";
 import { useToast } from "@/lib/ToastContext";
 import { useGroup } from "@/lib/stellar/useGroup";
 import { fetchMemberBalance, fetchGroupExpenses, type Expense } from "@/lib/stellar/queries";
-import { fetchSettlementHistory, type SettlementEvent } from "@/lib/stellar/settlementHistory";
+import { fetchGroupActivity, type ActivityEvent } from "@/lib/stellar/activity";
 
 export default function GroupDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -25,8 +25,8 @@ export default function GroupDetailPage() {
   const [balancesLoading, setBalancesLoading] = useState(true);
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [expensesLoading, setExpensesLoading] = useState(true);
-  const [history, setHistory] = useState<SettlementEvent[]>([]);
-  const [historyLoading, setHistoryLoading] = useState(true);
+  const [activity, setActivity] = useState<ActivityEvent[]>([]);
+  const [activityLoading, setActivityLoading] = useState(true);
 
   const refreshBalances = useCallback(async () => {
     if (!address || !group) return;
@@ -55,11 +55,11 @@ export default function GroupDetailPage() {
       .catch((err) => showToast(err instanceof Error ? err.message : "Failed to load expenses"))
       .finally(() => setExpensesLoading(false));
 
-    setHistoryLoading(true);
-    fetchSettlementHistory(groupId)
-      .then(setHistory)
-      .catch(() => setHistory([]))
-      .finally(() => setHistoryLoading(false));
+    setActivityLoading(true);
+    fetchGroupActivity(groupId)
+      .then(setActivity)
+      .catch(() => setActivity([]))
+      .finally(() => setActivityLoading(false));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [group?.id]);
 
@@ -89,7 +89,13 @@ export default function GroupDetailPage() {
         onOpenExpense={(expenseId) => router.push(`/groups/${groupId}/expenses/${expenseId}`)}
         onSettleUp={() => router.push(`/groups/${groupId}/settle`)}
       />
-      <SettlementHistory events={history} loading={historyLoading} tokenSymbol={tokenSymbol} walletAddress={address} />
+      <ActivityFeed
+        events={activity}
+        loading={activityLoading}
+        tokenSymbol={tokenSymbol}
+        walletAddress={address}
+        expenses={expenses}
+      />
     </>
   );
 }

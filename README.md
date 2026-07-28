@@ -8,7 +8,7 @@ Built for the Stellar Journey to Mastery builder challenge (Level 4).
 
 **Live app:** https://stellar-settle-frontend.vercel.app/
 **Feedback form:** https://docs.google.com/forms/d/e/1FAIpQLSeaFS7Um-dxvSLKnls-A1NMGxn9PCJOzIC8_3GfqzZ4lVXihw/viewform
-**Settlement contract (testnet):** `CCFOZE4G2B6ZNUWSMFAMJA6WAFZMLUOMIXZMJV3N3Y75TVIC3PO2SRCB`
+**Settlement contract (testnet):** `CDPWFPPALHB66OZS3LFS35GKAYD3GM5LU4DZH6XVYBXJUSTSIDCWIM7R`
 
 ## Why Stellar
 
@@ -65,6 +65,17 @@ Built for the Stellar Journey to Mastery builder challenge (Level 4).
    authorization entries from every member currently in debt, not just the
    caller.
 
+Every state-changing call (`create_group`, `log_expense`, `confirm_expense`,
+`dispute_expense`, and each transfer inside `settle`) emits an on-chain event,
+so the frontend's Activity feed can show a real, permanent transaction link
+for every action — not just a toast that disappears after a few seconds.
+
+**Note:** the contract was redeployed once (new contract ID) specifically to
+add this event logging — Soroban contracts can only be upgraded in place if
+they shipped with an upgrade function from day one, which this one didn't.
+Groups created against the earlier contract ID are still on the ledger but no
+longer reachable from this app.
+
 ## Development
 
 ```bash
@@ -80,7 +91,7 @@ between `ed25519-dalek` and `rand_core` in `soroban-env-host`.
 
 Deployed on testnet:
 
-- Settlement contract: `CCFOZE4G2B6ZNUWSMFAMJA6WAFZMLUOMIXZMJV3N3Y75TVIC3PO2SRCB`
+- Settlement contract: `CDPWFPPALHB66OZS3LFS35GKAYD3GM5LU4DZH6XVYBXJUSTSIDCWIM7R`
 - Demo settlement token (SETL): `CBDYIM4WCQIE2QEP7TAS3WDCQ2WUJQZPF35T7OEWI5W5BSBR7W3CT24U`
 
 ```bash
@@ -129,3 +140,7 @@ to try it directly instead of a static image of made-up data.
 - **Loading/error states:** every async screen (groups, balances,
   expenses, settlement preview) has a loading state, and failures surface
   as a toast rather than a silent failure.
+- **Durable transaction history:** every group page has an Activity feed
+  reading real on-chain events (group created, expenses logged/confirmed/
+  disputed, settlements) with a permanent Stellar Expert link per action —
+  not just a toast that's gone once you navigate away.

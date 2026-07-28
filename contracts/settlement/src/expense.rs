@@ -1,4 +1,4 @@
-use soroban_sdk::{Address, Env, String, Vec};
+use soroban_sdk::{symbol_short, Address, Env, String, Vec};
 
 use crate::balances::{get_balance, set_balance};
 use crate::group::load_group;
@@ -67,6 +67,9 @@ pub fn log_expense(
         .persistent()
         .extend_ttl(&key, BUMP_THRESHOLD, BUMP_AMOUNT);
 
+    env.events()
+        .publish((symbol_short!("exp_new"), group_id), (id, expense.payer.clone(), expense.amount));
+
     id
 }
 
@@ -88,6 +91,8 @@ pub fn confirm_expense(env: &Env, group_id: u64, expense_id: u64, participant: A
     let participant_balance = get_balance(env, group_id, &participant);
     set_balance(env, group_id, &participant, participant_balance - share);
 
+    env.events()
+        .publish((symbol_short!("exp_conf"), group_id), (expense_id, participant.clone()));
     expense.confirmed.push_back(participant);
     let key = DataKey::Expense(group_id, expense_id);
     env.storage().persistent().set(&key, &expense);
@@ -106,6 +111,8 @@ pub fn dispute_expense(env: &Env, group_id: u64, expense_id: u64, participant: A
         "not a participant on this expense"
     );
 
+    env.events()
+        .publish((symbol_short!("exp_disp"), group_id), (expense_id, participant.clone()));
     expense.disputed.push_back(participant);
     let key = DataKey::Expense(group_id, expense_id);
     env.storage().persistent().set(&key, &expense);

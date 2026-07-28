@@ -1,4 +1,4 @@
-use soroban_sdk::{Address, Env, String, Vec};
+use soroban_sdk::{symbol_short, Address, Env, String, Vec};
 
 use crate::types::{DataKey, Group};
 
@@ -37,6 +37,8 @@ pub fn create_group(env: &Env, creator: Address, name: String, token: Address, m
     for member in members.iter() {
         add_member_group(env, &member, id);
     }
+
+    env.events().publish((symbol_short!("grp_new"), id), creator);
 
     id
 }
