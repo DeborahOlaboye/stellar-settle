@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { track } from "@vercel/analytics";
 import { truncateAddress } from "@/lib/stellar/format";
 import type { SettleTx } from "@/lib/stellar/settleFlow";
@@ -52,6 +52,31 @@ export function SettleStatus({
 
   const allSigned = debtors.every((d) => signed.has(d));
 
+  const submit = useCallback(async () => {
+    setPhase("submitting");
+    try {
+      const { txHash } = await submitSettlement(tx);
+      setTxHash(txHash);
+      setPhase("confirmed");
+      track("settlement_completed", { groupName, transfersCount, txHash });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Settlement failed");
+      setPhase("collecting");
+    }
+  }, [tx, groupName, transfersCount]);
+
+  // If nobody besides the caller needs to sign (they were the only debtor),
+  // there's no "Sign in Freighter" click to hang the submit off of — kick it
+  // off directly instead of leaving the UI stuck showing "submitting" with
+  // nothing actually submitting.
+  const autoSubmitted = useRef(false);
+  useEffect(() => {
+    if (debtors.length === 0 && !autoSubmitted.current) {
+      autoSubmitted.current = true;
+      submit();
+    }
+  }, [debtors, submit]);
+
   async function handleSign(address: string) {
     setError(null);
     setSigningAddress(address);
@@ -67,19 +92,6 @@ export function SettleStatus({
       setError(err instanceof Error ? err.message : "Signature failed");
     } finally {
       setSigningAddress(null);
-    }
-  }
-
-  async function submit() {
-    setPhase("submitting");
-    try {
-      const { txHash } = await submitSettlement(tx);
-      setTxHash(txHash);
-      setPhase("confirmed");
-      track("settlement_completed", { groupName, transfersCount, txHash });
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Settlement failed");
-      setPhase("collecting");
     }
   }
 
