@@ -70,11 +70,15 @@ Every state-changing call (`create_group`, `log_expense`, `confirm_expense`,
 so the frontend's Activity feed can show a real, permanent transaction link
 for every action — not just a toast that disappears after a few seconds.
 
-**Note:** the contract was redeployed once (new contract ID) specifically to
-add this event logging — Soroban contracts can only be upgraded in place if
-they shipped with an upgrade function from day one, which this one didn't.
-Groups created against the earlier contract ID are still on the ledger but no
-longer reachable from this app.
+**Note:** the contract was redeployed once, specifically to add this event
+logging — Soroban contracts can only be upgraded in place if they shipped
+with an upgrade function from day one, which this one didn't.
+
+- Old contract (no events, no longer used): `CCFOZE4G2B6ZNUWSMFAMJA6WAFZMLUOMIXZMJV3N3Y75TVIC3PO2SRCB`
+- Current contract (with events): `CDPWFPPALHB66OZS3LFS35GKAYD3GM5LU4DZH6XVYBXJUSTSIDCWIM7R`
+
+Groups created against the old contract ID are still on the ledger but are no
+longer reachable from this app — that data wasn't deleted, just orphaned.
 
 ## Development
 
