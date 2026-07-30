@@ -5,7 +5,7 @@ import { track } from "@vercel/analytics";
 import { truncateAddress } from "@/lib/stellar/format";
 import { explorerTxUrl } from "@/lib/stellar/config";
 import type { SettleTx } from "@/lib/stellar/settleFlow";
-import { signSettlementAs, submitSettlement } from "@/lib/stellar/settleFlow";
+import { signSettlementAs, submitSettlement, describeSettleError } from "@/lib/stellar/settleFlow";
 
 function StepDot({ state }: { state: "done" | "active" | "pending"; label: string }) {
   if (state === "done") {
@@ -29,6 +29,7 @@ function StepDot({ state }: { state: "done" | "active" | "pending"; label: strin
 }
 
 export function SettleStatus({
+  groupId,
   groupName,
   tokenSymbol,
   transfersCount,
@@ -36,6 +37,7 @@ export function SettleStatus({
   debtors,
   onDone,
 }: {
+  groupId: bigint;
   groupName: string;
   tokenSymbol: string;
   transfersCount: number;
@@ -61,10 +63,11 @@ export function SettleStatus({
       setPhase("confirmed");
       track("settlement_completed", { groupName, transfersCount, txHash });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Settlement failed");
+      setError(describeSettleError(err, { step: "submit", debtors, groupId }));
+      track("settlement_error", { groupId: groupId.toString(), step: "submit" });
       setPhase("collecting");
     }
-  }, [tx, groupName, transfersCount]);
+  }, [tx, groupName, transfersCount, debtors, groupId]);
 
   // If nobody besides the caller needs to sign (they were the only debtor),
   // there's no "Sign in Freighter" click to hang the submit off of — kick it
@@ -90,7 +93,8 @@ export function SettleStatus({
         await submit();
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Signature failed");
+      setError(describeSettleError(err, { step: "sign", address, debtors, groupId }));
+      track("settlement_error", { groupId: groupId.toString(), step: "sign", address });
     } finally {
       setSigningAddress(null);
     }

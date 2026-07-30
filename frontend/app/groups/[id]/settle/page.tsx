@@ -56,6 +56,7 @@ export default function SettlePage() {
   if (settleTx) {
     return (
       <SettleStatus
+        groupId={groupId}
         groupName={group.name}
         tokenSymbol={tokenSymbol}
         transfersCount={transfers.length}
