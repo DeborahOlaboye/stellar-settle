@@ -123,11 +123,52 @@ Freighter's active account between each debtor's signature.
 | --- | --- |
 | ![Desktop landing](docs/screenshots/desktop-landing.png) | ![Mobile landing](docs/screenshots/mobile-landing.png) |
 
-The landing page needs no wallet connection, so these are pulled straight from
-the live deployment — no fabricated data. Screenshots of the connected app
-(groups, balances, expenses) aren't included here yet because that requires
-a real wallet session with real on-chain groups; see the live app link above
-to try it directly instead of a static image of made-up data.
+All screenshots are pulled from the live deployment with real wallets and
+real on-chain data — no fabricated groups, balances, or names.
+
+### Full real user journey (two real wallets, testnet)
+
+[docs/screenshots/connected-app/](docs/screenshots/connected-app/) walks through
+an entire real session end to end:
+
+1. [Groups dashboard](docs/screenshots/connected-app/01-groups-dashboard.png)
+2. [Group balances (empty)](docs/screenshots/connected-app/02-group-balances-empty.png)
+3. [Log expense form](docs/screenshots/connected-app/06-log-expense-form.png) — correct
+   per-person split, payer included
+4. [Expenses tab, pending confirmation](docs/screenshots/connected-app/04-expenses-tab-pending.png)
+5. [Confirming as the payer](docs/screenshots/connected-app/03-confirm-as-payer.png) —
+   net-zero balance change, clearly explained
+6. [Same expense from the second real wallet](docs/screenshots/connected-app/07-expenses-second-wallet-view.png)
+7. [Confirming as the second wallet](docs/screenshots/connected-app/08-confirm-as-second-wallet.png) —
+   "Confirm — I owe this"
+8. [Expenses tab, fully confirmed](docs/screenshots/connected-app/09-expenses-fully-confirmed.png)
+9. [Balances updated for real](docs/screenshots/connected-app/10-balances-updated.png) —
+   +100.00 / -100.00
+10. [Settlement preview](docs/screenshots/connected-app/11-settle-preview.png) — minimal
+    transfer set
+11. [Settlement confirmed](docs/screenshots/connected-app/12-settle-confirmed.png) —
+    real transaction hash
+12. [Verified on Stellar Expert](docs/screenshots/connected-app/13-verified-onchain-transaction.png) —
+    the actual `settle` invocation and transfer, independently confirmed on-chain
+
+### Same journey, mobile viewport
+
+[docs/screenshots/connected-app-mobile/](docs/screenshots/connected-app-mobile/) is a
+second full real session end to end, at mobile width, on a different group:
+
+1. [Groups dashboard](docs/screenshots/connected-app-mobile/01-groups-dashboard.png)
+2. [Create group](docs/screenshots/connected-app-mobile/02-create-group.png)
+3. [Group balances (empty)](docs/screenshots/connected-app-mobile/03-group-balances-empty.png)
+4. [Log expense form](docs/screenshots/connected-app-mobile/04-log-expense-form.png)
+5. [Expenses tab, pending](docs/screenshots/connected-app-mobile/05-expenses-tab-pending.png)
+6. [Confirming as the payer](docs/screenshots/connected-app-mobile/06-confirm-as-payer.png)
+7. [1/2 confirmed](docs/screenshots/connected-app-mobile/07-expenses-1of2-confirmed.png)
+8. [Same expense from the second real wallet](docs/screenshots/connected-app-mobile/08-second-wallet-review.png)
+9. [Fully confirmed](docs/screenshots/connected-app-mobile/09-expenses-fully-confirmed.png)
+10. [Balances updated for real](docs/screenshots/connected-app-mobile/10-balances-updated.png)
+11. [Settlement preview](docs/screenshots/connected-app-mobile/11-settle-preview.png)
+12. [Settlement confirmed](docs/screenshots/connected-app-mobile/12-settle-confirmed.png) —
+    a second, independent real transaction hash
 
 ## Product quality
 
