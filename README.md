@@ -230,6 +230,24 @@ Feedback was collected via the in-app Google Form.
 
 ![Vercel Analytics](docs/screenshots/vercel-analytics.png)
 
+## 11 Real Onboarded Users
+
+> 👉 **Verify On-Chain**: [View all transactions and contract activity on Stellar.Expert](https://stellar.expert/explorer/testnet/contract/CDPWFPPALHB66OZS3LFS35GKAYD3GM5LU4DZH6XVYBXJUSTSIDCWIM7R)
+
+These are the 11 public addresses of the users who successfully interacted with the Stellar Settle smart contract, verified via on-chain activity and collected feedback:
+
+1. `GDGQ3EDSG4TVF3V23WKWV2QCCGPGLRFS5HVD37SGXQ57E6JNUICKEEOB` - John - [🔍 Verify Account](https://stellar.expert/explorer/testnet/account/GDGQ3EDSG4TVF3V23WKWV2QCCGPGLRFS5HVD37SGXQ57E6JNUICKEEOB)
+2. `GCKIYKVSULULAU7BAERAEWVPZ3QX6UIXZVHH27LJ2ULLU43LL6SJQS6X` - Victor - [🔍 Verify Account](https://stellar.expert/explorer/testnet/account/GCKIYKVSULULAU7BAERAEWVPZ3QX6UIXZVHH27LJ2ULLU43LL6SJQS6X)
+3. `GA7UI5WKPENBFYXPFTSEF6XPATACL7XH43RUO5HYZGFS4XR2WMBVDVGL` - gold andrew - [🔍 Verify Account](https://stellar.expert/explorer/testnet/account/GA7UI5WKPENBFYXPFTSEF6XPATACL7XH43RUO5HYZGFS4XR2WMBVDVGL)
+4. `GDK44RVCCQQA4HPNUFRZVALD7KRMAH5VG3IY2HL6IDOCXRVUGTOZ6F34` - Johnson - [🔍 Verify Account](https://stellar.expert/explorer/testnet/account/GDK44RVCCQQA4HPNUFRZVALD7KRMAH5VG3IY2HL6IDOCXRVUGTOZ6F34)
+5. `GDVIBVLH7IJUAJL4QNQRXWY262WQ6BLSGUFJV2HDXDGKDCUDDVYRDNWW` - Rebecca - [🔍 Verify Account](https://stellar.expert/explorer/testnet/account/GDVIBVLH7IJUAJL4QNQRXWY262WQ6BLSGUFJV2HDXDGKDCUDDVYRDNWW)
+6. `GAL7QADSB7IKGCAZKZGDLRTH42KBRFC3VCOKELDOFE3SWIRAWOWTFWIH` - Pelumi Osas - [🔍 Verify Account](https://stellar.expert/explorer/testnet/account/GAL7QADSB7IKGCAZKZGDLRTH42KBRFC3VCOKELDOFE3SWIRAWOWTFWIH)
+7. `GDRPRELYBUZSIQ4OFBJVUYSSAB4RK3JIBBI34Q6NH2Q576CSMXMEHYAD` - [🔍 Verify Account](https://stellar.expert/explorer/testnet/account/GDRPRELYBUZSIQ4OFBJVUYSSAB4RK3JIBBI34Q6NH2Q576CSMXMEHYAD)
+8. `GCSUKZSISNFDTCYEJ7OYO2A3DAKFKRISFZLKKZKQUVHP624W5TBNDOKH` - Deja - [🔍 Verify Account](https://stellar.expert/explorer/testnet/account/GCSUKZSISNFDTCYEJ7OYO2A3DAKFKRISFZLKKZKQUVHP624W5TBNDOKH)
+9. `GCT6OIHMNJ5OVNWYERFULDDM7OJZIOUYAXU6MKSWCD32WMQBVDPKXOSW` - [🔍 Verify Account](https://stellar.expert/explorer/testnet/account/GCT6OIHMNJ5OVNWYERFULDDM7OJZIOUYAXU6MKSWCD32WMQBVDPKXOSW)
+10. `GD72SIUBU2LGDMV26S2DU56A5XR6KNB5GKJOPXWY44Z2O7DEFO2UDZBR` - Emmanuel - [🔍 Verify Account](https://stellar.expert/explorer/testnet/account/GD72SIUBU2LGDMV26S2DU56A5XR6KNB5GKJOPXWY44Z2O7DEFO2UDZBR)
+11. `GDZ4VJWNJPLNU3PAWDYX3V5XNATO7X257DPHWRPFXSCCNEUZ7QTXIIUI` - Ruth Peace - [🔍 Verify Account](https://stellar.expert/explorer/testnet/account/GDZ4VJWNJPLNU3PAWDYX3V5XNATO7X257DPHWRPFXSCCNEUZ7QTXIIUI)
+
 ## Product quality
 
 - **Monitoring/analytics:** Vercel Analytics and Speed Insights are wired
