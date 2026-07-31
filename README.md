@@ -226,6 +226,10 @@ Feedback was collected via the in-app Google Form.
 - Expense confirmation/dispute: multiple users confirmed and disputed shares.
 - Mobile: full journeys completed at mobile viewport width (`docs/screenshots/connected-app-mobile/`).
 
+### Vercel Analytics dashboard
+
+![Vercel Analytics](docs/screenshots/vercel-analytics.png)
+
 ## Product quality
 
 - **Monitoring/analytics:** Vercel Analytics and Speed Insights are wired
