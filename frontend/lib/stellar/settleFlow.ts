@@ -1,7 +1,7 @@
 import type { AssembledTransaction } from "@stellar/stellar-sdk/contract";
 import type { Transfer } from "settlement-client";
 import { createSettlementClient } from "./clients";
-import { signAuthEntryWithFreighter } from "./freighter";
+import { signAuthEntryWithFreighter, SignerMismatchError } from "./freighter";
 
 export type SettleTx = AssembledTransaction<Transfer[]>;
 
@@ -47,8 +47,16 @@ export function describeSettleError(
 
   console.error("[settle error]", { ...context, message, stack, error: err });
 
-  if (message.includes("HostError") || message.includes("Error(")) {
+  // Already a clear, actionable message — don't wrap it.
+  if (err instanceof SignerMismatchError || message.includes("HostError") || message.includes("Error(")) {
     return message;
+  }
+
+  // A stale/mismatched Freighter signature can also slip through as a raw
+  // network rejection instead of being caught by the signer check — same
+  // underlying cause, same fix.
+  if (message.includes("txBadAuth")) {
+    return "The transaction was rejected for a bad signature — Freighter's active account may not match the connected wallet. Switch to the correct account in Freighter and try again.";
   }
 
   return `Something unexpected went wrong (${message}). Open the browser console for full details and please report this — it's a bug, not something a retry will usually fix.`;

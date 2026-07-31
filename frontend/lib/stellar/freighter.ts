@@ -31,6 +31,20 @@ export async function currentAddress(): Promise<string | null> {
   return result.address;
 }
 
+export class SignerMismatchError extends Error {
+  constructor(expected: string, actual: string) {
+    super(
+      `Freighter signed with ${truncateForError(actual)}, but ${truncateForError(expected)} was expected. ` +
+        `Switch Freighter's active account to ${truncateForError(expected)} and try again.`,
+    );
+    this.name = "SignerMismatchError";
+  }
+}
+
+function truncateForError(address: string): string {
+  return address.length > 12 ? `${address.slice(0, 6)}...${address.slice(-4)}` : address;
+}
+
 /** Matches the `signTransaction` shape expected by the generated contract clients. */
 export async function signTransactionWithFreighter(
   xdr: string,
@@ -41,6 +55,13 @@ export async function signTransactionWithFreighter(
     address: opts?.address,
   });
   if (result.error) throw new Error(result.error.message ?? "Freighter rejected the transaction");
+  // A stale active account in Freighter (e.g. left on a different test
+  // wallet from an earlier step) produces a transaction that *looks* signed
+  // but fails on submission with an opaque txBadAuth from the network.
+  // Catch the mismatch here instead, with a message that says what to do.
+  if (opts?.address && result.signerAddress && result.signerAddress !== opts.address) {
+    throw new SignerMismatchError(opts.address, result.signerAddress);
+  }
   return result;
 }
 
@@ -56,6 +77,9 @@ export async function signAuthEntryWithFreighter(
     address: opts?.address,
   });
   if (result.error) throw new Error(result.error.message ?? "Freighter rejected the signature");
+  if (opts?.address && result.signerAddress && result.signerAddress !== opts.address) {
+    throw new SignerMismatchError(opts.address, result.signerAddress);
+  }
   return {
     signedAuthEntry: Buffer.isBuffer(result.signedAuthEntry)
       ? result.signedAuthEntry.toString("base64")

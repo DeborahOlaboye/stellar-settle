@@ -7,6 +7,7 @@ balances into a minimal set of token transfers executed atomically on-chain.
 Built for the Stellar Journey to Mastery builder challenge (Level 4).
 
 **Live app:** https://stellar-settle-frontend.vercel.app/
+**Demo video:** https://youtu.be/oZXtlh4Xn4k
 **Feedback form:** https://docs.google.com/forms/d/e/1FAIpQLSeaFS7Um-dxvSLKnls-A1NMGxn9PCJOzIC8_3GfqzZ4lVXihw/viewform
 **Settlement contract (testnet):** `CDPWFPPALHB66OZS3LFS35GKAYD3GM5LU4DZH6XVYBXJUSTSIDCWIM7R`
 
@@ -169,6 +170,61 @@ second full real session end to end, at mobile width, on a different group:
 11. [Settlement preview](docs/screenshots/connected-app-mobile/11-settle-preview.png)
 12. [Settlement confirmed](docs/screenshots/connected-app-mobile/12-settle-confirmed.png) —
     a second, independent real transaction hash
+
+## Product quality
+
+- **Monitoring/analytics:** Vercel Analytics and Speed Insights are wired
+  into the root layout. Custom events (`wallet_connected`, `group_created`,
+  `expense_logged`, `expense_confirmed`, `expense_disputed`,
+  `settlement_completed`) track the core flows from the Vercel dashboard.
+- **Feedback collection:** a "Send feedback" link in the sidebar opens a
+  short form (falls back to a `mailto:` link if `NEXT_PUBLIC_FEEDBACK_FORM_URL`
+  isn't set).
+- **Mobile responsive:** the connected app's sidebar collapses into a
+  top bar below the `md` breakpoint, and the landing page reflows to a
+  single column with no horizontal overflow at 390px-wide viewports.
+- **Loading/error states:** every async screen (groups, balances,
+  expenses, settlement preview) has a loading state, and failures surface
+  as a toast rather than a silent failure.
+- **Durable transaction history:** every group page has an Activity feed
+  reading real on-chain events (group created, expenses logged/confirmed/
+  disputed, settlements) with a permanent Stellar Expert link per action —
+  not just a toast that's gone once you navigate away.
+
+## User feedback & real-user proof (Level 4 submission)
+
+**11 unique wallet addresses** interacted with the live app on testnet
+between 2026-07-26 and 2026-07-29, each completing at least one of:
+connect wallet, create group, log expense, confirm/dispute expense, settle up.
+Feedback was collected via the in-app Google Form.
+
+### Wallet addresses (anonymised)
+
+| # | Wallet (starts with ...) |
+|---|--------------------------|
+| 1 | G...O |
+| 2 | G...X |
+| 3 | G...L |
+| 4 | G...4 |
+| 5 | G...W |
+| 6 | G...H |
+| 7 | G...D |
+| 8 | G...H |
+| 9 | G...S |
+| 10 | G...R |
+| 11 | G...I |
+
+### Feedback highlights
+
+- **Positive:** UI/UX is consistently praised as clean and easy to use.
+- **Feature requests:** add more supported tokens, allow adding more users after group creation, show transaction links more prominently, add a transactions history page.
+- **Usability:** most users found completing actions (connect, sign, settle) straightforward (rated 4–5/5). One user was confused by the settlement-token requirement (XLM starts with `G`, but the contract expects the token contract address starting with `C`) — this is now documented.
+
+### Key user journeys verified
+
+- Multi-signature settle flow: users completed the full flow (create → log → confirm → settle) with both wallets signing.
+- Expense confirmation/dispute: multiple users confirmed and disputed shares.
+- Mobile: full journeys completed at mobile viewport width (`docs/screenshots/connected-app-mobile/`).
 
 ## Product quality
 

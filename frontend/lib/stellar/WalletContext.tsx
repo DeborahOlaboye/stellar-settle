@@ -10,6 +10,13 @@ type WalletState = {
   checking: boolean;
   connect: () => Promise<string>;
   disconnect: () => void;
+  /** Re-syncs to whatever account is currently active in Freighter, without
+   * a full disconnect/reconnect. Switching accounts still has to happen
+   * inside the Freighter extension itself (a dApp can't do that for
+   * security reasons) — this just picks up that change immediately instead
+   * of leaving the app pointed at a stale address, which otherwise produces
+   * a confusing signature-mismatch failure the next time something signs. */
+  switchWallet: () => Promise<string>;
 };
 
 const WalletContext = createContext<WalletState | null>(null);
