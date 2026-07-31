@@ -50,8 +50,15 @@ export function WalletProvider({ children }: { children: ReactNode }) {
     setAddress(null);
   }
 
+  async function switchWallet(): Promise<string> {
+    const addr = await currentAddress();
+    if (!addr) throw new Error("No Freighter account selected");
+    setAddress(addr);
+    return addr;
+  }
+
   return (
-    <WalletContext.Provider value={{ address, connecting, checking, connect, disconnect }}>
+    <WalletContext.Provider value={{ address, connecting, checking, connect, disconnect, switchWallet }}>
       {children}
     </WalletContext.Provider>
   );
