@@ -1,15 +1,18 @@
 # stellar-settle
 
 Cross-border group expense splitting on Stellar. Groups log shared expenses,
-the contract tracks net balances per member, and settling collapses those
+the contract tracks net balances per member and settling collapses those
 balances into a minimal set of token transfers executed atomically on-chain.
 
 Built for the Stellar Journey to Mastery builder challenge (Level 4).
 
 **Live app:** https://stellar-settle-frontend.vercel.app/
+
 **Demo video:** https://youtu.be/oZXtlh4Xn4k
+
 **Feedback form:** https://docs.google.com/forms/d/e/1FAIpQLSeaFS7Um-dxvSLKnls-A1NMGxn9PCJOzIC8_3GfqzZ4lVXihw/viewform
-**Settlement contract (testnet):** `CDPWFPPALHB66OZS3LFS35GKAYD3GM5LU4DZH6XVYBXJUSTSIDCWIM7R`
+
+**Contract Address (testnet):** `CDPWFPPALHB66OZS3LFS35GKAYD3GM5LU4DZH6XVYBXJUSTSIDCWIM7R`
 
 ## Why Stellar
 
@@ -97,7 +100,6 @@ between `ed25519-dalek` and `rand_core` in `soroban-env-host`.
 Deployed on testnet:
 
 - Settlement contract: `CDPWFPPALHB66OZS3LFS35GKAYD3GM5LU4DZH6XVYBXJUSTSIDCWIM7R`
-- Demo settlement token (SETL): `CBDYIM4WCQIE2QEP7TAS3WDCQ2WUJQZPF35T7OEWI5W5BSBR7W3CT24U`
 
 ```bash
 npm install                          # from repo root, installs the workspace
@@ -191,29 +193,6 @@ second full real session end to end, at mobile width, on a different group:
   disputed, settlements) with a permanent Stellar Expert link per action —
   not just a toast that's gone once you navigate away.
 
-## User feedback & real-user proof (Level 4 submission)
-
-**11 unique wallet addresses** interacted with the live app on testnet
-between 2026-07-26 and 2026-07-29, each completing at least one of:
-connect wallet, create group, log expense, confirm/dispute expense, settle up.
-Feedback was collected via the in-app Google Form.
-
-### Wallet addresses (anonymised)
-
-| # | Wallet (starts with ...) |
-|---|--------------------------|
-| 1 | G...O |
-| 2 | G...X |
-| 3 | G...L |
-| 4 | G...4 |
-| 5 | G...W |
-| 6 | G...H |
-| 7 | G...D |
-| 8 | G...H |
-| 9 | G...S |
-| 10 | G...R |
-| 11 | G...I |
-
 ### Feedback highlights
 
 - **Positive:** UI/UX is consistently praised as clean and easy to use.
@@ -230,7 +209,12 @@ Feedback was collected via the in-app Google Form.
 
 ![Vercel Analytics](docs/screenshots/vercel-analytics.png)
 
-## 11 Real Onboarded Users
+## User feedback & real-user proof (Level 4 submission)
+
+**11 unique wallet addresses** interacted with the live app on testnet
+between 2026-07-26 and 2026-07-29, each completing at least one of:
+connect wallet, create group, log expense, confirm/dispute expense, settle up.
+Feedback was collected via the in-app Google Form.
 
 > 👉 **Verify On-Chain**: [View all transactions and contract activity on Stellar.Expert](https://stellar.expert/explorer/testnet/contract/CDPWFPPALHB66OZS3LFS35GKAYD3GM5LU4DZH6XVYBXJUSTSIDCWIM7R)
 
