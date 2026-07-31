@@ -209,7 +209,7 @@ second full real session end to end, at mobile width, on a different group:
 
 ![Vercel Analytics](docs/screenshots/vercel-analytics.png)
 
-## User feedback & real-user proof (Level 4 submission)
+## User feedback & real-user proof
 
 **11 unique wallet addresses** interacted with the live app on testnet
 between 2026-07-26 and 2026-07-29, each completing at least one of:
